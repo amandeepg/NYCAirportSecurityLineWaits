@@ -176,45 +176,57 @@ private fun LoadedAirportCard(
             Modifier.padding(5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                terminal.identifier,
-                modifier = Modifier
-                    .let { m ->
-                        val whiteBorder =
-                            if (isSystemInDarkTheme()) LocalContentColor.current
-                            else OFFWHITE_BORDER
-                        when (terminal) {
-                            EWR_A -> m.roundedTerminalHeader(TERMINAL_RED, whiteBorder)
-                            EWR_B -> m.roundedTerminalHeader(TERMINAL_BLUE, whiteBorder)
-                            EWR_C -> m.roundedTerminalHeader(TERMINAL_GREEN, whiteBorder)
-                            JFK_1,
-                            JFK_2,
-                            LGA_B -> m.squareTerminalHeader(TERMINAL_GREEN, whiteBorder)
-                            JFK_4 -> m.squareTerminalHeader(TERMINAL_BLUE, whiteBorder)
-                            JFK_5 -> m.squareTerminalHeader(TERMINAL_YELLOW, Color.Black)
-                            JFK_7,
-                            LGA_D -> m.squareTerminalHeader(TERMINAL_MUSTARD, Color.Black)
-                            JFK_8,
-                            LGA_C -> m.squareTerminalHeader(TERMINAL_RED, whiteBorder)
-                            LGA_A -> m.squareTerminalHeader(TERMINAL_BLUE, whiteBorder)
-                            SWF_1 -> m
+            if (terminal != SWF_MAIN) {
+                Text(
+                    terminal.identifier,
+                    modifier = Modifier
+                        .let { m ->
+                            val whiteBorder =
+                                if (isSystemInDarkTheme()) LocalContentColor.current
+                                else OFFWHITE_BORDER
+                            when (terminal) {
+                                EWR_A -> m.roundedTerminalHeader(TERMINAL_RED, whiteBorder)
+                                EWR_B -> m.roundedTerminalHeader(
+                                    TERMINAL_BLUE,
+                                    whiteBorder,
+                                    shiftedDown = true
+                                )
+                                EWR_C -> m.roundedTerminalHeader(TERMINAL_GREEN, whiteBorder)
+                                JFK_1,
+                                JFK_2,
+                                LGA_B -> m.squareTerminalHeader(TERMINAL_GREEN, whiteBorder)
+                                JFK_4 -> m.squareTerminalHeader(TERMINAL_BLUE, whiteBorder)
+                                JFK_5 -> m.squareTerminalHeader(TERMINAL_YELLOW, Color.Black)
+                                JFK_7,
+                                LGA_D -> m.squareTerminalHeader(TERMINAL_MUSTARD, Color.Black)
+                                JFK_8,
+                                LGA_C -> m.squareTerminalHeader(TERMINAL_RED, whiteBorder)
+                                LGA_A -> m.squareTerminalHeader(TERMINAL_BLUE, whiteBorder)
+                                SWF_MAIN -> m
+                            }
                         }
-                    }
-                    .badgeLayout(
-                        offsetX = if (terminal == EWR_B) 3.dp.value.toInt() else 0
-                    ),
-                fontSize = 25.sp,
-                color = when (terminal) {
-                    JFK_5,
-                    JFK_7,
-                    LGA_D -> Color.Black
-                    else -> if (isSystemInDarkTheme()) LocalContentColor.current else Color.White
-                },
-                fontWeight = if (terminal == EWR_B) FontWeight.SemiBold else FontWeight.Black
-            )
-            Spacer(Modifier.width(10.dp))
+                        .badgeLayout(
+                            offsetX = if (terminal == EWR_B) 3.dp.value.toInt() else 0
+                        ),
+                    fontSize = when (terminal) {
+                        EWR_A, EWR_B, EWR_C -> 20.sp
+                        else -> 25.sp
+                    },
+                    color = when (terminal) {
+                        JFK_5,
+                        JFK_7,
+                        LGA_D -> Color.Black
+                        else -> if (isSystemInDarkTheme()) LocalContentColor.current else Color.White
+                    },
+                    fontWeight = if (terminal == EWR_B) FontWeight.SemiBold else FontWeight.Black
+                )
+                Spacer(Modifier.width(10.dp))
+            }
             Text(
-                "Terminal ${terminal.identifier}",
+                when (terminal) {
+                    SWF_MAIN -> "Main Terminal"
+                    else -> "Terminal ${terminal.identifier}"
+                },
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -272,35 +284,44 @@ private fun LoadedAirportCard(
     }
 }
 
-private fun Modifier.roundedTerminalHeader(backgroundColor: Color, foregroundColor: Color) =
+private fun Modifier.roundedTerminalHeader(
+    backgroundColor: Color,
+    foregroundColor: Color,
+    shiftedDown: Boolean = false,
+) =
     drawBehind {
-        drawStrokedRoundedTriangle(backgroundColor, foregroundColor)
+        drawStrokedRoundedTriangle(backgroundColor, foregroundColor, shiftedDown)
     }
 
 private fun DrawScope.drawStrokedRoundedTriangle(
     backgroundColor: Color,
-    foregroundColor: Color
+    foregroundColor: Color,
+    shiftedDown: Boolean,
 ) {
     drawRoundedTriangle(
-        backgroundColor = backgroundColor
+        backgroundColor = backgroundColor,
+        shiftedDown = shiftedDown,
     )
     drawRoundedTriangle(
         factor = 0.97f,
-        backgroundColor = foregroundColor
+        backgroundColor = foregroundColor,
+        shiftedDown = shiftedDown,
     )
     drawRoundedTriangle(
         factor = 0.86f,
-        backgroundColor = backgroundColor
+        backgroundColor = backgroundColor,
+        shiftedDown = shiftedDown,
     )
 }
 
 private fun DrawScope.drawRoundedTriangle(
     factor: Float = 1f,
-    backgroundColor: Color
+    backgroundColor: Color,
+    shiftedDown: Boolean,
 ) {
-    val factorX = 1.65f * factor
-    val factorY = 1.4f * factor
-    val offsetFactorY = 0.2f * factor
+    val factorX = 2.2f * factor
+    val factorY = 2.0f * factor
+    val offsetFactorY = (if (shiftedDown) 0.39f else 0.32f) * factor
     val rect = Rect(
         offset = Offset(
             x = -size.width * (factorX - 1f) / 2f,
@@ -437,7 +458,9 @@ fun Time(
                     else -> "mins"
                 },
                 color = color,
-                modifier = Modifier.offset(y = (-MIN_OFFSET).dp).animateContentSize(),
+                modifier = Modifier
+                    .offset(y = (-MIN_OFFSET).dp)
+                    .animateContentSize(),
                 style = Typography.labelSmall.copy(
                     fontWeight = FontWeight.Light
                 )

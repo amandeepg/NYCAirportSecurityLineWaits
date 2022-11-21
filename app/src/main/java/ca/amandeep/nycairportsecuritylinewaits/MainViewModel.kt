@@ -38,7 +38,7 @@ class MainViewModel : ViewModel() {
                         else -> throw IllegalStateException()
                     }
                     AirportCode.SWF -> when (terminal) {
-                        "1" -> Terminal.SWF_1
+                        "1" -> Terminal.SWF_MAIN
                         else -> throw IllegalStateException()
                     }
                 }
@@ -88,6 +88,6 @@ class MainViewModel : ViewModel() {
         LGA_B(AirportCode.LGA, "B"),
         LGA_C(AirportCode.LGA, "C"),
         LGA_D(AirportCode.LGA, "D"),
-        SWF_1(AirportCode.SWF, "1"),
+        SWF_MAIN(AirportCode.SWF, "Main"),
     }
 }
