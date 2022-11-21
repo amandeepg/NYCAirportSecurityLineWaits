@@ -5,6 +5,7 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
+import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
@@ -38,9 +39,13 @@ interface AirportService {
 }
 
 suspend fun AirportService.getWaitTimes(airportCode: AirportCode): List<Queue> =
-    getWaitTimesUnsafe(airportCode.shortCode)
+    try {
+        getWaitTimesUnsafe(airportCode.shortCode)
+    } catch (e: HttpException) {
+        emptyList()
+    }
 
-class DateAdapter : JsonAdapter<Date>() {
+private class DateAdapter : JsonAdapter<Date>() {
     companion object {
         @SuppressLint("SimpleDateFormat")
         private val FORMATTER = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX")
