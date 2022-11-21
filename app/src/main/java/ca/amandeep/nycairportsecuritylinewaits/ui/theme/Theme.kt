@@ -16,6 +16,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme()
 
@@ -38,9 +39,16 @@ fun NYCAirportSecurityLineWaitsTheme(
     }
     val view = LocalView.current
     if (!view.isInEditMode) {
+        /* getting the current window by tapping into the Activity */
+        val currentWindow = (view.context as? Activity)?.window
+            ?: throw Exception("Not in an activity - unable to get Window reference")
+
         SideEffect {
-            (view.context as Activity).window.statusBarColor = colorScheme.surface.toArgb()
-            ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = !darkTheme
+            /* the default code did the same cast here - might as well use our new variable! */
+            currentWindow.statusBarColor = colorScheme.primary.toArgb()
+            /* accessing the insets controller to change appearance of the status bar, with 100% less deprecation warnings */
+            WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightStatusBars =
+                darkTheme
         }
     }
 

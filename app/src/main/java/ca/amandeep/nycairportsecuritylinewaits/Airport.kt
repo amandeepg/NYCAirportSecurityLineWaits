@@ -400,10 +400,10 @@ private fun QueuesMins(
 @Composable
 fun Time(
     id: Any,
-    time: Int
+    targetTime: Int
 ) {
     Crossfade(
-        targetState = time,
+        targetState = targetTime,
         Modifier.layoutId(id)
     ) { time ->
         Column(
@@ -450,7 +450,7 @@ fun Time(
 @Composable
 fun AirportPreviewDark() = AirportPreview()
 
-@Preview()
+@Preview
 @Composable
 fun AirportPreviewLight() = AirportPreview()
 

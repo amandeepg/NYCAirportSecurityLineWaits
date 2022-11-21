@@ -53,19 +53,18 @@ private fun MainScreen(mainViewModel: MainViewModel) {
     val navController = rememberAnimatedNavController()
     Scaffold(
         topBar = {
-            SmallTopAppBar(
-                title = {
-                    Column(modifier = Modifier.animateContentSize()) {
-                        Crossfade(targetState = title.value) { titleValue ->
-                            Text(titleValue?.shortCode ?: "NYC Airport Security Lines")
-                        }
-                        Crossfade(targetState = title.value) { titleValue ->
-                            if (titleValue != null) {
-                                Text(titleValue.fullName, fontSize = 14.sp)
-                            }
+            TopAppBar(title = {
+                Column(modifier = Modifier.animateContentSize()) {
+                    Crossfade(targetState = title.value) { titleValue ->
+                        Text(titleValue?.shortCode ?: "NYC Airport Security Lines")
+                    }
+                    Crossfade(targetState = title.value) { titleValue ->
+                        if (titleValue != null) {
+                            Text(titleValue.fullName, fontSize = 14.sp)
                         }
                     }
-                },
+                }
+            },
                 navigationIcon = {
                     Box(modifier = Modifier.animateContentSize()) {
                         if (title.value == null)
@@ -77,9 +76,7 @@ private fun MainScreen(mainViewModel: MainViewModel) {
                             )
                         }
                     }
-                },
-                
-            )
+                })
         },
     ) { innerPadding ->
         Box(
