@@ -186,7 +186,7 @@ fun Selection(
             ),
         verticalArrangement = Arrangement.spacedBy(40.dp, Alignment.CenterVertically)
     ) {
-        AirportCode.values().forEach {
+        AirportCode.values().toList().minus(AirportCode.SWF).forEach {
             Column(
                 Modifier.clickable { navigateTo(it.shortCode) }
             ) {
