@@ -1,7 +1,5 @@
 @file:OptIn(
-    ExperimentalMaterial3Api::class,
     ExperimentalAnimationApi::class,
-    ExperimentalFoundationApi::class
 )
 
 package ca.amandeep.nycairportsecuritylinewaits
@@ -10,7 +8,6 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -19,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.LocalContentColor
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,6 +33,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -87,7 +84,6 @@ fun Airport(
                     items(airport.terminals) { (terminal, gates) ->
                         Card3(
                             Modifier
-//                                .fillMaxWidth()
                                 .padding(horizontal = 15.dp, vertical = 9.dp),
                             elevation = 5.dp
                         ) {
@@ -104,73 +100,6 @@ private fun LoadedAirportCard(
     gates: List<Pair<String, MainViewModel.Queues>>,
     terminal: MainViewModel.Terminal
 ) {
-    val constraintSet = ConstraintSet {
-        val gatesLabel = createRefFor(GatesId())
-        val generalLabel = createRefFor(GeneralId())
-        val preLabel = createRefFor(PreId())
-
-        val gateRefs =
-            gates.indices.map { createRefFor(GatesId(it)) }
-        val generalRefs =
-            gateRefs.indices.map { createRefFor(GeneralId(it)) }
-        val preRefs =
-            gateRefs.indices.map { createRefFor(PreId(it)) }
-
-        val margin = COLUMNS_MARGIN.dp
-        val endGate =
-            createEndBarrier(gateRefs + gatesLabel, margin)
-        val endGeneral =
-            createEndBarrier(generalRefs + generalLabel, margin)
-        val endPre =
-            createEndBarrier(preRefs + preLabel, margin)
-
-        gateRefs.indices.forEach { i ->
-            val bottomBarrier =
-                if (i > 0) createBottomBarrier(
-                    gateRefs[i - 1],
-                    generalRefs[i - 1],
-                    preRefs[i - 1],
-                    margin = (-MIN_OFFSET / 2).dp
-                ) else null
-
-            constrain(gateRefs[i]) {
-                top.linkTo(bottomBarrier ?: gatesLabel.bottom)
-                start.linkTo(parent.start)
-                bottom.linkTo(generalRefs[i].bottom)
-                bottom.linkTo(preRefs[i].bottom)
-            }
-            constrain(generalRefs[i]) {
-                top.linkTo(bottomBarrier ?: gatesLabel.bottom)
-                start.linkTo(endGate)
-                end.linkTo(endGeneral)
-                bottom.linkTo(gateRefs[i].bottom)
-                bottom.linkTo(preRefs[i].bottom)
-            }
-            constrain(preRefs[i]) {
-                top.linkTo(bottomBarrier ?: gatesLabel.bottom)
-                start.linkTo(endGeneral)
-                end.linkTo(endPre)
-                bottom.linkTo(gateRefs[i].bottom)
-                bottom.linkTo(generalRefs[i].bottom)
-            }
-        }
-
-        constrain(gatesLabel) {
-            top.linkTo(parent.top)
-            start.linkTo(parent.start)
-        }
-        constrain(generalLabel) {
-            top.linkTo(gatesLabel.top)
-            start.linkTo(endGate)
-            end.linkTo(endGeneral)
-        }
-        constrain(preLabel) {
-            top.linkTo(gatesLabel.top)
-            bottom.linkTo(gatesLabel.bottom)
-            start.linkTo(endGeneral)
-            end.linkTo(endPre)
-        }
-    }
     Column(Modifier.fillMaxWidth()) {
         Row(
             Modifier.padding(5.dp),
@@ -231,57 +160,175 @@ private fun LoadedAirportCard(
                 fontWeight = FontWeight.Bold
             )
         }
-        ConstraintLayout(
-            constraintSet = constraintSet,
-            Modifier.padding(10.dp)
-        ) {
-            Typography.labelMedium.copy(
-//                fontWeight = FontWeight.Black,
-                color = Typography.labelMedium.color
-            ).let { style ->
-                Text(
-                    "Gates",
-                    Modifier
-                        .layoutId(GatesId())
-                        .alpha(0.7f),
-                    style = style
-                )
-                Text(
-                    "General Line",
-                    Modifier
-                        .layoutId(GeneralId())
-                        .alpha(0.7f),
-                    style = style
-                )
-                Icon(
-                    modifier = Modifier
-                        .layoutId(PreId())
-                        .height(16.dp)
-                        .widthIn(min = 40.dp)
-                        .alpha(0.7f),
-                    painter = painterResource(id = R.drawable.ic_pre),
-                    contentDescription = "PreCheck",
-                )
-//                Text(
-//                    "Pre✓ Line",
-//                    Modifier
-//                        .layoutId(PreId())
-//                        .alpha(0.7f),
-//                    style = style
-//                )
-            }
+        val gateHeaderStyle = Typography.labelMedium.copy(
+            color = Typography.labelMedium.color
+        )
+        val singleGateGroup =
+            gates.firstOrNull()?.first?.startsWith("all", ignoreCase = true) == true
+        val allPrecheckClosed = gates.all { it.second.preCheck?.queueOpen != true }
 
-            gates.forEachIndexed { i, (gate, queues) ->
-                Text(
-                    if (gate.equals("All gates", ignoreCase = true)) "All" else gate,
-                    Modifier
-                        .layoutId(GatesId(i))
-                        .alpha(if (queues.bothClosed) CLOSED_ALPHA else 1f),
-                )
-                QueuesMins(i, queues)
+        @Suppress("SimplifyBooleanWithConstants", "KotlinConstantConditions")
+        if (false && singleGateGroup && allPrecheckClosed) {
+            Box(Modifier.padding(10.dp)) {
+                QueuesMins(0, gates.first().second, showEmptyPrecheckInGrid = false)
+            }
+        } else {
+            val constraintSet = ConstraintSet {
+                val generalLabel = createRefFor(GeneralId())
+                val preLabel = createRefFor(PreId())
+                val margin = COLUMNS_MARGIN.dp
+
+                if (singleGateGroup) {
+                    val generalTimeRef = createRefFor(GeneralId(0))
+                    val preTimeRef = createRefFor(PreId(0))
+
+                    val endGeneral = createEndBarrier(generalTimeRef, generalLabel, margin = margin)
+                    val endPre = createEndBarrier(preTimeRef, preLabel, margin = margin)
+
+                    constrain(generalTimeRef) {
+                        start.linkTo(parent.start)
+                        end.linkTo(endGeneral)
+                        top.linkTo(generalLabel.bottom)
+                        bottom.linkTo(preTimeRef.bottom)
+                    }
+                    constrain(preTimeRef) {
+                        start.linkTo(endGeneral)
+                        end.linkTo(endPre)
+                        top.linkTo(generalLabel.bottom)
+                        bottom.linkTo(generalTimeRef.bottom)
+                    }
+
+                    constrain(generalLabel) {
+                        start.linkTo(parent.start)
+                        top.linkTo(preLabel.top)
+                        bottom.linkTo(preLabel.bottom)
+                    }
+                    constrain(preLabel) {
+                        start.linkTo(endGeneral)
+                        end.linkTo(endPre)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(generalLabel.bottom)
+                    }
+                } else {
+                    val gatesLabel = createRefFor(GatesId())
+
+                    val gateRefs =
+                        gates.indices.map { createRefFor(GatesId(it)) }
+                    val generalRefs =
+                        gates.indices.map { createRefFor(GeneralId(it)) }
+                    val preRefs =
+                        gates.indices.map { createRefFor(PreId(it)) }
+
+                    val endGate =
+                        createEndBarrier(gateRefs + gatesLabel, margin)
+                    val endGeneral =
+                        createEndBarrier(generalRefs + generalLabel, margin)
+                    val endPre =
+                        createEndBarrier(preRefs + preLabel, margin)
+
+                    gates.indices.forEach { i ->
+                        val bottomBarrier =
+                            if (i > 0) createBottomBarrier(
+                                gateRefs[i - 1],
+                                generalRefs[i - 1],
+                                preRefs[i - 1],
+                                margin = (-MIN_OFFSET / 2).dp
+                            ) else null
+
+                        constrain(gateRefs[i]) {
+                            top.linkTo(bottomBarrier ?: gatesLabel.bottom)
+                            start.linkTo(parent.start)
+                            bottom.linkTo(generalRefs[i].bottom)
+                            bottom.linkTo(preRefs[i].bottom)
+                        }
+                        constrain(generalRefs[i]) {
+                            top.linkTo(bottomBarrier ?: gatesLabel.bottom)
+                            start.linkTo(endGate)
+                            end.linkTo(endGeneral)
+                            bottom.linkTo(gateRefs[i].bottom)
+                            bottom.linkTo(preRefs[i].bottom)
+                        }
+                        constrain(preRefs[i]) {
+                            top.linkTo(bottomBarrier ?: gatesLabel.bottom)
+                            start.linkTo(endGeneral)
+                            end.linkTo(endPre)
+                            bottom.linkTo(gateRefs[i].bottom)
+                            bottom.linkTo(generalRefs[i].bottom)
+                        }
+                    }
+
+                    constrain(gatesLabel) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                    }
+                    constrain(generalLabel) {
+                        top.linkTo(gatesLabel.top)
+                        start.linkTo(endGate ?: parent.start)
+                        end.linkTo(endGeneral)
+                    }
+                    constrain(preLabel) {
+                        top.linkTo(gatesLabel.top)
+                        bottom.linkTo(gatesLabel.bottom)
+                        start.linkTo(endGeneral)
+                        end.linkTo(endPre)
+                    }
+                }
+            }
+            ConstraintLayout(
+                constraintSet = constraintSet,
+                Modifier.padding(10.dp)
+            ) {
+                if (!singleGateGroup)
+                    Text(
+                        "Gates",
+                        Modifier
+                            .layoutId(GatesId())
+                            .alpha(0.7f),
+                        style = gateHeaderStyle
+                    )
+                GeneralLabel(gateHeaderStyle)
+                if (!allPrecheckClosed)
+                    PrecheckLabel()
+
+                gates.forEachIndexed { i, (gate, queues) ->
+                    if (!singleGateGroup)
+                        Text(
+                            if (gate.equals("All gates", ignoreCase = true)) "All" else gate,
+                            Modifier
+                                .layoutId(GatesId(i))
+                                .alpha(if (queues.bothClosed) CLOSED_ALPHA else 1f),
+                        )
+                    QueuesMins(i, queues, showEmptyPrecheckInGrid = true)
+                }
             }
         }
     }
+}
+
+@Composable
+private fun PrecheckLabel() {
+    Icon(
+        modifier = Modifier
+            .layoutId(PreId())
+            .height(16.dp)
+            .widthIn(min = 40.dp)
+            .alpha(0.7f),
+        painter = painterResource(id = R.drawable.ic_pre),
+        contentDescription = "PreCheck",
+    )
+}
+
+@Composable
+private fun GeneralLabel(
+    gateHeaderStyle: TextStyle
+) {
+    Text(
+        "General Line",
+        Modifier
+            .layoutId(GeneralId())
+            .alpha(0.7f),
+        style = gateHeaderStyle
+    )
 }
 
 private fun Modifier.roundedTerminalHeader(
@@ -397,7 +444,8 @@ fun ConstraintLayoutBaseScope.createEndBarrier(
 @Composable
 private fun QueuesMins(
     i: Int,
-    queues: MainViewModel.Queues
+    queues: MainViewModel.Queues,
+    showEmptyPrecheckInGrid: Boolean,
 ) {
     if (queues.general.queueOpen)
         Time(GeneralId(i), queues.general.timeInMinutes)
@@ -414,7 +462,7 @@ private fun QueuesMins(
         )
     if (queues.preCheck?.queueOpen == true)
         Time(PreId(i), queues.preCheck.timeInMinutes)
-    else
+    else if (showEmptyPrecheckInGrid)
         Time(PreId(i), -1)
 }
 
@@ -558,8 +606,53 @@ fun AirportPreview() {
                     EWR_C to listOf(
                     ),
                     JFK_4 to listOf(
+                        "All" to MainViewModel.Queues(
+                            general = Queue(
+                                timeInMinutes = 50,
+                                gate = "All",
+                                terminal = "1",
+                                queueType = QueueType.Reg,
+                                queueOpen = true,
+                                updateTime = Date(),
+                                isWaitTimeAvailable = false,
+                                status = "Open",
+                            ),
+                            preCheck = Queue(
+                                timeInMinutes = 2,
+                                gate = "All",
+                                terminal = "1",
+                                queueType = QueueType.TSAPre,
+                                queueOpen = false,
+                                updateTime = Date(),
+                                isWaitTimeAvailable = false,
+                                status = "Open",
+                            )
+                        ),
                     ),
                     JFK_7 to listOf(
+
+                        "All" to MainViewModel.Queues(
+                            general = Queue(
+                                timeInMinutes = 50,
+                                gate = "All",
+                                terminal = "1",
+                                queueType = QueueType.Reg,
+                                queueOpen = true,
+                                updateTime = Date(),
+                                isWaitTimeAvailable = false,
+                                status = "Open",
+                            ),
+                            preCheck = Queue(
+                                timeInMinutes = 2,
+                                gate = "All",
+                                terminal = "1",
+                                queueType = QueueType.TSAPre,
+                                queueOpen = true,
+                                updateTime = Date(),
+                                isWaitTimeAvailable = false,
+                                status = "Open",
+                            )
+                        ),
                     ),
                     LGA_C to listOf(
                     ),
