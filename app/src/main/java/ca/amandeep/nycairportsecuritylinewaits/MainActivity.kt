@@ -1,4 +1,7 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@file:OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalAnimationApi::class,
+)
 
 package ca.amandeep.nycairportsecuritylinewaits
 
@@ -7,6 +10,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.*
+import androidx.compose.animation.core.AnimationConstants.DefaultDurationMillis
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
@@ -53,18 +59,15 @@ private fun MainScreen(mainViewModel: MainViewModel) {
     val navController = rememberAnimatedNavController()
     Scaffold(
         topBar = {
-            TopAppBar(title = {
-                Column(modifier = Modifier.animateContentSize()) {
+            TopAppBar(
+                title = {
                     Crossfade(targetState = title.value) { titleValue ->
-                        Text(titleValue?.shortCode ?: "NYC Airport Security Lines")
-                    }
-                    Crossfade(targetState = title.value) { titleValue ->
-                        if (titleValue != null) {
-                            Text(titleValue.fullName, fontSize = 14.sp)
+                        Column {
+                            Text(titleValue?.shortCode ?: stringResource(id = R.string.app_name))
+                            Text(titleValue?.fullName.orEmpty(), fontSize = 13.sp)
                         }
                     }
-                }
-            },
+                },
                 navigationIcon = {
                     Box(modifier = Modifier.animateContentSize()) {
                         if (title.value == null)
@@ -82,9 +85,11 @@ private fun MainScreen(mainViewModel: MainViewModel) {
         Box(
             Modifier.fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
-        ){
+        ) {
             Icon(
-                modifier = Modifier.size(80.dp).alpha(0.2f),
+                modifier = Modifier
+                    .size(80.dp)
+                    .alpha(0.2f),
                 painter = painterResource(id = R.drawable.statue_of_liberty),
                 contentDescription = null
             )
@@ -170,6 +175,8 @@ fun NavGraphBuilder.slideAnimatedComposable(
     )
 }
 
+private const val REMOVE_SWF = true
+
 @Composable
 fun Selection(
     innerPadding: PaddingValues,
@@ -186,7 +193,11 @@ fun Selection(
             ),
         verticalArrangement = Arrangement.spacedBy(40.dp, Alignment.CenterVertically)
     ) {
-        AirportCode.values().toList().minus(AirportCode.SWF).forEach {
+        AirportCode.values().toList().let {
+            if (REMOVE_SWF)
+                it - AirportCode.SWF
+            else it
+        }.forEach {
             Column(
                 Modifier.clickable { navigateTo(it.shortCode) }
             ) {
