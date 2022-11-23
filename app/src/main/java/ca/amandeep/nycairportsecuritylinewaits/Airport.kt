@@ -95,6 +95,8 @@ fun Airport(
     }
 }
 
+private const val SHOW_TERMINAL_ICONS = false
+
 @Composable
 private fun LoadedAirportCard(
     gates: List<Pair<String, MainViewModel.Queues>>,
@@ -105,7 +107,7 @@ private fun LoadedAirportCard(
             Modifier.padding(5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (terminal != SWF_MAIN) {
+            if (terminal != SWF_MAIN && SHOW_TERMINAL_ICONS) {
                 Text(
                     terminal.identifier,
                     modifier = Modifier
