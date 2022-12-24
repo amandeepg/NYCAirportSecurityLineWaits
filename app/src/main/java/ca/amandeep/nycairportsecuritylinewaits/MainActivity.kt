@@ -10,8 +10,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.*
-import androidx.compose.animation.core.AnimationConstants.DefaultDurationMillis
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,6 +18,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -27,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,7 +54,8 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun MainScreen(mainViewModel: MainViewModel) {
+@Preview
+private fun MainScreen(mainViewModel: MainViewModel = MainViewModel()) {
     val title: MutableState<AirportCode?> = remember { mutableStateOf(null) }
     val navController = rememberAnimatedNavController()
     Scaffold(
@@ -88,8 +89,8 @@ private fun MainScreen(mainViewModel: MainViewModel) {
         ) {
             Icon(
                 modifier = Modifier
-                    .size(80.dp)
-                    .alpha(0.2f),
+                    .size(130.dp)
+                    .alpha(0.3f),
                 painter = painterResource(id = R.drawable.statue_of_liberty),
                 contentDescription = null
             )
@@ -191,7 +192,7 @@ fun Selection(
                 top = innerPadding.calculateTopPadding() + 20.dp,
                 bottom = innerPadding.calculateBottomPadding() + 20.dp,
             ),
-        verticalArrangement = Arrangement.spacedBy(40.dp, Alignment.CenterVertically)
+        verticalArrangement = Arrangement.spacedBy(40.dp, BiasAlignment.Vertical(-0.4f))
     ) {
         AirportCode.values().toList().let {
             if (REMOVE_SWF)
