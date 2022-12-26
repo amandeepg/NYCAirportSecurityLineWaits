@@ -90,7 +90,7 @@ private fun MainScreen(mainViewModel: MainViewModel = MainViewModel()) {
             Icon(
                 modifier = Modifier
                     .size(130.dp)
-                    .alpha(0.3f),
+                    .alpha(0.15f),
                 painter = painterResource(id = R.drawable.statue_of_liberty),
                 contentDescription = null
             )
