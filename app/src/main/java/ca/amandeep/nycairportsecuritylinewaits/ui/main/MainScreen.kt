@@ -217,7 +217,7 @@ private fun LoadingScreen() {
     ) {
         CircularProgressIndicator()
         Spacer(Modifier.height(10.dp))
-        Text(text = "Loading …", color = MaterialTheme.colorScheme.secondary)
+        Text(text = stringResource(R.string.loading), color = MaterialTheme.colorScheme.secondary)
     }
 }
 
@@ -243,7 +243,7 @@ private fun TitleAndBackBar(
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Back"
+                        contentDescription = stringResource(R.string.back)
                     )
                 }
             }

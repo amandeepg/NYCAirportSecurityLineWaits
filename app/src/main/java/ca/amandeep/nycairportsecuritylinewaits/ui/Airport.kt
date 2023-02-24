@@ -51,6 +51,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -208,8 +209,8 @@ private fun LoadedAirportCard(
             }
             Text(
                 when (terminal) {
-                    Terminal.SWF_MAIN -> "Main Terminal"
-                    else -> "Terminal ${terminal.identifier}"
+                    Terminal.SWF_MAIN -> stringResource(R.string.main_terminal)
+                    else -> stringResource(R.string.terminal) + terminal.identifier
                 },
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
@@ -339,7 +340,7 @@ private fun LoadedAirportCard(
             ) {
                 if (!singleGateGroup) {
                     Text(
-                        "Gates",
+                        stringResource(R.string.gates),
                         Modifier
                             .layoutId(GatesId())
                             .alpha(0.7f),
@@ -354,7 +355,11 @@ private fun LoadedAirportCard(
                 gates.forEachIndexed { i, (gate, queues) ->
                     if (!singleGateGroup) {
                         Text(
-                            if (gate.equals("All gates", ignoreCase = true)) "All" else gate,
+                            if (gate.equals("All gates", ignoreCase = true)) {
+                                stringResource(R.string.all)
+                            } else {
+                                gate
+                            },
                             Modifier
                                 .layoutId(GatesId(i))
                                 .alpha(if (queues.bothClosed) CLOSED_ALPHA else 1f)
@@ -376,7 +381,7 @@ private fun PrecheckLabel() {
             .widthIn(min = 40.dp)
             .alpha(0.7f),
         painter = painterResource(id = R.drawable.ic_pre),
-        contentDescription = "PreCheck"
+        contentDescription = stringResource(R.string.precheck)
     )
 }
 
@@ -385,7 +390,7 @@ private fun GeneralLabel(
     gateHeaderStyle: TextStyle
 ) {
     Text(
-        "General Line",
+        stringResource(R.string.general_line),
         Modifier
             .layoutId(GeneralId())
             .alpha(0.7f),
@@ -500,7 +505,7 @@ private fun QueuesMins(
         Time(GeneralId(i), queues.general.timeInMinutes)
     } else {
         Text(
-            "Closed",
+            stringResource(R.string.closed),
             Modifier
                 .layoutId(GeneralId(i))
                 .alpha(if (queues.bothClosed) CLOSED_ALPHA else 1f),
@@ -558,8 +563,8 @@ private fun Time(
             )
             Text(
                 when (time) {
-                    1 -> "min"
-                    else -> "mins"
+                    1 -> stringResource(R.string.min)
+                    else -> stringResource(R.string.mins)
                 },
                 color = color,
                 modifier = Modifier

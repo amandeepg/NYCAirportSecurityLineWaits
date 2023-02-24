@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">NYC Airports Security Lines</string>
+    <string name="general_line">General Line</string>
+    <string name="precheck">PreCheck</string>
+    <string name="main_terminal">Main Terminal</string>
+    <string name="terminal">"Terminal "</string>
+    <string name="gates">Gates</string>
+    <string name="all">All</string>
+    <string name="closed">Closed</string>
+    <string name="min">min</string>
+    <string name="mins">mins</string>
+    <string name="error_icon">Error icon</string>
+    <string name="loading_error">An error occurred while loading airport lines info</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="last_known_information">, below is the last known information from %1$s mins ago</string>
+    <string name="no_internet_icon">No internet icon</string>
+    <string name="couldnt_load_lines">Couldn\'t load lines info</string>
+    <string name="try_again">Try again</string>
+    <string name="loading">Loading …</string>
+    <string name="back">Back</string>
 </resources>
