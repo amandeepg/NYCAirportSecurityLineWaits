@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -75,11 +76,15 @@ import kotlin.system.measureTimeMillis
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
-fun MainScreen(mainViewModel: MainViewModel) {
+fun MainScreen(
+    modifier: Modifier = Modifier,
+    mainViewModel: MainViewModel = viewModel()
+) {
     var titleAirportCode by remember { mutableStateOf<AirportCode?>(null) }
     val navController = rememberAnimatedNavController()
     Scaffold(
-        topBar = { TitleAndBackBar(titleAirportCode, navController) },
+        modifier = modifier,
+        topBar = { TitleAndBackBar(titleAirportCode, navController) }
     ) { innerPadding ->
         Box(
             Modifier.fillMaxSize(),
@@ -128,12 +133,12 @@ fun MainScreen(mainViewModel: MainViewModel) {
                     // If there's an error, show the last valid state, but with an error flag
                     val uiState = setAndComputeLastGoodState(
                         uiStateFlow = uiStateFlow,
-                        forceUpdate = forceRefresh,
+                        forceUpdate = forceRefresh
                     )
 
                     val ptrState = rememberPullRefreshState(
                         refreshing = refreshing,
-                        onRefresh = forceRefresh,
+                        onRefresh = forceRefresh
                     )
 
                     Box(
@@ -166,9 +171,11 @@ private fun setAndComputeLastGoodState(
     }
 
     setLastGoodState(
-        if (uiState is MainUiState.Error && lastGoodState is MainUiState.Valid)
+        if (uiState is MainUiState.Error && lastGoodState is MainUiState.Valid) {
             lastGoodState.copy(hasError = true)
-        else uiState
+        } else {
+            uiState
+        }
     )
 
     return lastGoodState
@@ -178,26 +185,27 @@ private fun setAndComputeLastGoodState(
 @Composable
 private fun MainScreenContent(
     uiState: MainUiState,
-    forceUpdate: () -> Unit,
+    forceUpdate: () -> Unit
 ) {
     val connectivityState by LocalContext.current.observeConnectivity()
         .collectAsStateWithLifecycle(initialValue = ConnectionState.Available)
 
-    if (uiState == MainUiState.Error)
+    if (uiState == MainUiState.Error) {
         ErrorScreen(
             connectivityState = connectivityState,
             forceUpdate = forceUpdate
         )
-    else
+    } else {
         Crossfade(targetState = uiState == MainUiState.Loading) { isLoading ->
             when (isLoading) {
                 true -> LoadingScreen()
                 false -> AirportScreen(
                     uiState = uiState as MainUiState.Valid,
-                    connectivityState = connectivityState,
+                    connectivityState = connectivityState
                 )
             }
         }
+    }
 }
 
 @Composable
@@ -231,13 +239,14 @@ private fun TitleAndBackBar(
     // Back button that shows when an airport is selected
     navigationIcon = {
         Box(modifier = Modifier.animateContentSize()) {
-            if (titleAirportCode != null)
+            if (titleAirportCode != null) {
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = "Back"
                     )
                 }
+            }
         }
     }
 )
@@ -282,17 +291,20 @@ private const val REMOVE_SWF = true
 @Composable
 fun Selection(
     navigateTo: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        Modifier
+        modifier
             .fillMaxSize()
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(40.dp, BiasAlignment.Vertical(-0.4f))
     ) {
         AirportCode.values().toList().let {
-            if (REMOVE_SWF)
+            if (REMOVE_SWF) {
                 it - AirportCode.SWF
-            else it
+            } else {
+                it
+            }
         }.forEach {
             Column(
                 Modifier

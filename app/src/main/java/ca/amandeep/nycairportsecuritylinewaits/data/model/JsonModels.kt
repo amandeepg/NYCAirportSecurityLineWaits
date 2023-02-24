@@ -2,8 +2,10 @@ package ca.amandeep.nycairportsecuritylinewaits.data.model
 
 import ca.amandeep.nycairportsecuritylinewaits.data.AirportCode
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import java.util.Date
 
+@JsonClass(generateAdapter = true)
 data class Queue(
     @field:Json(name = "timeInMinutes") val timeInMinutes: Int,
     @field:Json(name = "gate") val gate: String,
@@ -12,7 +14,7 @@ data class Queue(
     @field:Json(name = "queueOpen") val queueOpen: Boolean,
     @field:Json(name = "updateTime") val updateTime: Date,
     @field:Json(name = "isWaitTimeAvailable") val isWaitTimeAvailable: Boolean,
-    @field:Json(name = "status") val status: String,
+    @field:Json(name = "status") val status: String
 ) {
     fun terminal(airportCode: AirportCode) = when (airportCode) {
         AirportCode.EWR -> when (terminal) {
@@ -53,7 +55,7 @@ enum class QueueType {
 
 enum class Terminal(
     val airportCode: AirportCode,
-    val identifier: String,
+    val identifier: String
 ) {
     EWR_A(AirportCode.EWR, "A"),
     EWR_B(AirportCode.EWR, "B"),
@@ -68,5 +70,5 @@ enum class Terminal(
     LGA_B(AirportCode.LGA, "B"),
     LGA_C(AirportCode.LGA, "C"),
     LGA_D(AirportCode.LGA, "D"),
-    SWF_MAIN(AirportCode.SWF, "Main"),
+    SWF_MAIN(AirportCode.SWF, "Main")
 }

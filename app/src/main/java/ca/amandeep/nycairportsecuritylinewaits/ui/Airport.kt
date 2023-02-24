@@ -1,5 +1,5 @@
 @file:OptIn(
-    ExperimentalAnimationApi::class,
+    ExperimentalAnimationApi::class
 )
 
 package ca.amandeep.nycairportsecuritylinewaits.ui
@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.LocalContentColor
+import androidx.compose.material.Surface
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -72,6 +73,8 @@ import ca.amandeep.nycairportsecuritylinewaits.ui.theme.Card3
 import ca.amandeep.nycairportsecuritylinewaits.ui.theme.NYCAirportSecurityLineWaitsTheme
 import ca.amandeep.nycairportsecuritylinewaits.ui.theme.Typography
 import ca.amandeep.nycairportsecuritylinewaits.util.ConnectionState
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -95,9 +98,10 @@ private data class PreId(val i: Int = -1)
 @Composable
 fun AirportScreen(
     uiState: MainUiState.Valid,
-    connectivityState: ConnectionState
+    connectivityState: ConnectionState,
+    modifier: Modifier = Modifier
 ) {
-    LazyColumn(Modifier.fillMaxHeight()) {
+    LazyColumn(modifier.fillMaxHeight()) {
         item {
             AnimatedVisibility(
                 visible = uiState.hasError,
@@ -128,7 +132,7 @@ private const val SHOW_TERMINAL_ICONS = false
 
 @Composable
 private fun LoadedAirportCard(
-    gates: List<Pair<String, Queues>>,
+    gates: ImmutableList<Pair<String, Queues>>,
     terminal: Terminal
 ) {
     Column(Modifier.fillMaxWidth()) {
@@ -141,29 +145,38 @@ private fun LoadedAirportCard(
                     terminal.identifier,
                     modifier = Modifier
                         .let { m ->
-                            val whiteBorder = if (isSystemInDarkTheme()) LocalContentColor.current
-                            else OFFWHITE_BORDER
+                            val whiteBorder = if (isSystemInDarkTheme()) {
+                                LocalContentColor.current
+                            } else {
+                                OFFWHITE_BORDER
+                            }
                             when (terminal) {
                                 Terminal.EWR_A -> m.roundedTerminalHeader(TERMINAL_RED, whiteBorder)
                                 Terminal.EWR_B -> m.roundedTerminalHeader(
-                                    TERMINAL_BLUE, whiteBorder, shiftedDown = true
+                                    TERMINAL_BLUE,
+                                    whiteBorder,
+                                    shiftedDown = true
                                 )
 
                                 Terminal.EWR_C -> m.roundedTerminalHeader(
-                                    TERMINAL_GREEN, whiteBorder
+                                    TERMINAL_GREEN,
+                                    whiteBorder
                                 )
 
                                 Terminal.JFK_1, Terminal.JFK_2, Terminal.LGA_B -> m.squareTerminalHeader(
-                                    TERMINAL_GREEN, whiteBorder
+                                    TERMINAL_GREEN,
+                                    whiteBorder
                                 )
 
                                 Terminal.JFK_4 -> m.squareTerminalHeader(TERMINAL_BLUE, whiteBorder)
                                 Terminal.JFK_5 -> m.squareTerminalHeader(
-                                    TERMINAL_YELLOW, Color.Black
+                                    TERMINAL_YELLOW,
+                                    Color.Black
                                 )
 
                                 Terminal.JFK_7, Terminal.LGA_D -> m.squareTerminalHeader(
-                                    TERMINAL_MUSTARD, Color.Black
+                                    TERMINAL_MUSTARD,
+                                    Color.Black
                                 )
 
                                 Terminal.JFK_8, Terminal.LGA_C -> m.squareTerminalHeader(
@@ -270,12 +283,16 @@ private fun LoadedAirportCard(
 
                     gates.indices.forEach { i ->
                         val bottomBarrier =
-                            if (i > 0) createBottomBarrier(
-                                gateRefs[i - 1],
-                                generalRefs[i - 1],
-                                preRefs[i - 1],
-                                margin = (-MIN_OFFSET / 2).dp
-                            ) else null
+                            if (i > 0) {
+                                createBottomBarrier(
+                                    gateRefs[i - 1],
+                                    generalRefs[i - 1],
+                                    preRefs[i - 1],
+                                    margin = (-MIN_OFFSET / 2).dp
+                                )
+                            } else {
+                                null
+                            }
 
                         constrain(gateRefs[i]) {
                             top.linkTo(bottomBarrier ?: gatesLabel.bottom)
@@ -320,7 +337,7 @@ private fun LoadedAirportCard(
                 constraintSet = constraintSet,
                 Modifier.padding(10.dp)
             ) {
-                if (!singleGateGroup)
+                if (!singleGateGroup) {
                     Text(
                         "Gates",
                         Modifier
@@ -328,18 +345,21 @@ private fun LoadedAirportCard(
                             .alpha(0.7f),
                         style = gateHeaderStyle
                     )
+                }
                 GeneralLabel(gateHeaderStyle)
-                if (!allPrecheckClosed)
+                if (!allPrecheckClosed) {
                     PrecheckLabel()
+                }
 
                 gates.forEachIndexed { i, (gate, queues) ->
-                    if (!singleGateGroup)
+                    if (!singleGateGroup) {
                         Text(
                             if (gate.equals("All gates", ignoreCase = true)) "All" else gate,
                             Modifier
                                 .layoutId(GatesId(i))
-                                .alpha(if (queues.bothClosed) CLOSED_ALPHA else 1f),
+                                .alpha(if (queues.bothClosed) CLOSED_ALPHA else 1f)
                         )
+                    }
                     QueuesMins(i, queues, showEmptyPrecheckInGrid = true)
                 }
             }
@@ -356,7 +376,7 @@ private fun PrecheckLabel() {
             .widthIn(min = 40.dp)
             .alpha(0.7f),
         painter = painterResource(id = R.drawable.ic_pre),
-        contentDescription = "PreCheck",
+        contentDescription = "PreCheck"
     )
 }
 
@@ -376,7 +396,7 @@ private fun GeneralLabel(
 private fun Modifier.roundedTerminalHeader(
     backgroundColor: Color,
     foregroundColor: Color,
-    shiftedDown: Boolean = false,
+    shiftedDown: Boolean = false
 ) =
     drawBehind {
         drawStrokedRoundedTriangle(backgroundColor, foregroundColor, shiftedDown)
@@ -385,28 +405,28 @@ private fun Modifier.roundedTerminalHeader(
 private fun DrawScope.drawStrokedRoundedTriangle(
     backgroundColor: Color,
     foregroundColor: Color,
-    shiftedDown: Boolean,
+    shiftedDown: Boolean
 ) {
     drawRoundedTriangle(
         backgroundColor = backgroundColor,
-        shiftedDown = shiftedDown,
+        shiftedDown = shiftedDown
     )
     drawRoundedTriangle(
         factor = 0.97f,
         backgroundColor = foregroundColor,
-        shiftedDown = shiftedDown,
+        shiftedDown = shiftedDown
     )
     drawRoundedTriangle(
         factor = 0.86f,
         backgroundColor = backgroundColor,
-        shiftedDown = shiftedDown,
+        shiftedDown = shiftedDown
     )
 }
 
 private fun DrawScope.drawRoundedTriangle(
     factor: Float = 1f,
     backgroundColor: Color,
-    shiftedDown: Boolean,
+    shiftedDown: Boolean
 ) {
     val factorX = 2.2f * factor
     val factorY = 2.0f * factor
@@ -474,11 +494,11 @@ private fun ConstraintLayoutBaseScope.createEndBarrier(
 private fun QueuesMins(
     i: Int,
     queues: Queues,
-    showEmptyPrecheckInGrid: Boolean,
+    showEmptyPrecheckInGrid: Boolean
 ) {
-    if (queues.general.queueOpen)
+    if (queues.general.queueOpen) {
         Time(GeneralId(i), queues.general.timeInMinutes)
-    else
+    } else {
         Text(
             "Closed",
             Modifier
@@ -489,10 +509,12 @@ private fun QueuesMins(
             fontStyle = FontStyle.Italic,
             fontWeight = FontWeight.SemiBold
         )
-    if (queues.preCheck?.queueOpen == true)
+    }
+    if (queues.preCheck?.queueOpen == true) {
         Time(PreId(i), queues.preCheck.timeInMinutes)
-    else if (showEmptyPrecheckInGrid)
+    } else if (showEmptyPrecheckInGrid) {
         Time(PreId(i), -1)
+    }
 }
 
 @Composable
@@ -509,27 +531,30 @@ private fun Time(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val color = when {
-                time < 10 -> if (isSystemInDarkTheme())
+                time < 10 -> if (isSystemInDarkTheme()) {
                     Color(129, 199, 132, 255)
-                else
+                } else {
                     Color(56, 142, 60, 255)
+                }
 
-                time < 25 -> if (isSystemInDarkTheme())
+                time < 25 -> if (isSystemInDarkTheme()) {
                     Color(255, 241, 118, 255)
-                else
+                } else {
                     Color(251, 192, 45, 255)
+                }
 
-                else -> if (isSystemInDarkTheme())
+                else -> if (isSystemInDarkTheme()) {
                     Color(229, 115, 115, 255)
-                else
+                } else {
                     Color(211, 47, 47, 255)
+                }
             }
             Text(
                 time.toString(),
                 fontSize = 30.sp,
                 color = color,
                 maxLines = 1,
-                fontWeight = FontWeight.Black,
+                fontWeight = FontWeight.Black
             )
             Text(
                 when (time) {
@@ -553,136 +578,138 @@ private fun Time(
 @Composable
 private fun AirportPreview() {
     NYCAirportSecurityLineWaitsTheme {
-        AirportScreen(
-            MainUiState.Valid(
-                lastUpdated = System.currentTimeMillis(),
-                airport = Airport(
-                    listOf(
-                        Terminal.JFK_1 to listOf(
-                            "10-18" to Queues(
-                                general = Queue(
-                                    timeInMinutes = 50,
-                                    gate = "10-18",
-                                    terminal = "1",
-                                    queueType = QueueType.Reg,
-                                    queueOpen = false,
-                                    updateTime = Date(),
-                                    isWaitTimeAvailable = false,
-                                    status = "Open",
+        Surface {
+            AirportScreen(
+                MainUiState.Valid(
+                    lastUpdated = System.currentTimeMillis(),
+                    airport = Airport(
+                        persistentListOf(
+                            Terminal.JFK_1 to persistentListOf(
+                                "10-18" to Queues(
+                                    general = Queue(
+                                        timeInMinutes = 50,
+                                        gate = "10-18",
+                                        terminal = "1",
+                                        queueType = QueueType.Reg,
+                                        queueOpen = false,
+                                        updateTime = Date(),
+                                        isWaitTimeAvailable = false,
+                                        status = "Open"
+                                    ),
+                                    preCheck = Queue(
+                                        timeInMinutes = 2,
+                                        gate = "10-18",
+                                        terminal = "1",
+                                        queueType = QueueType.TSAPre,
+                                        queueOpen = false,
+                                        updateTime = Date(),
+                                        isWaitTimeAvailable = false,
+                                        status = "Open"
+                                    )
                                 ),
-                                preCheck = Queue(
-                                    timeInMinutes = 2,
-                                    gate = "10-18",
-                                    terminal = "1",
-                                    queueType = QueueType.TSAPre,
-                                    queueOpen = false,
-                                    updateTime = Date(),
-                                    isWaitTimeAvailable = false,
-                                    status = "Open",
+                                "20-28" to Queues(
+                                    general = Queue(
+                                        timeInMinutes = 50,
+                                        gate = "10-18",
+                                        terminal = "1",
+                                        queueType = QueueType.Reg,
+                                        queueOpen = true,
+                                        updateTime = Date(),
+                                        isWaitTimeAvailable = true,
+                                        status = "Open"
+                                    ),
+                                    preCheck = Queue(
+                                        timeInMinutes = 20,
+                                        gate = "10-18",
+                                        terminal = "1",
+                                        queueType = QueueType.TSAPre,
+                                        queueOpen = true,
+                                        updateTime = Date(),
+                                        isWaitTimeAvailable = true,
+                                        status = "Open"
+                                    )
+                                ),
+                                "30-39" to Queues(
+                                    general = Queue(
+                                        timeInMinutes = 50,
+                                        gate = "10-18",
+                                        terminal = "1",
+                                        queueType = QueueType.Reg,
+                                        queueOpen = true,
+                                        updateTime = Date(),
+                                        isWaitTimeAvailable = true,
+                                        status = "Open"
+                                    ),
+                                    preCheck = Queue(
+                                        timeInMinutes = 2,
+                                        gate = "10-18",
+                                        terminal = "1",
+                                        queueType = QueueType.TSAPre,
+                                        queueOpen = true,
+                                        updateTime = Date(),
+                                        isWaitTimeAvailable = true,
+                                        status = "Open"
+                                    )
                                 )
                             ),
-                            "20-28" to Queues(
-                                general = Queue(
-                                    timeInMinutes = 50,
-                                    gate = "10-18",
-                                    terminal = "1",
-                                    queueType = QueueType.Reg,
-                                    queueOpen = true,
-                                    updateTime = Date(),
-                                    isWaitTimeAvailable = true,
-                                    status = "Open",
-                                ),
-                                preCheck = Queue(
-                                    timeInMinutes = 20,
-                                    gate = "10-18",
-                                    terminal = "1",
-                                    queueType = QueueType.TSAPre,
-                                    queueOpen = true,
-                                    updateTime = Date(),
-                                    isWaitTimeAvailable = true,
-                                    status = "Open",
+                            Terminal.EWR_A to persistentListOf(),
+                            Terminal.EWR_B to persistentListOf(),
+                            Terminal.EWR_C to persistentListOf(),
+                            Terminal.JFK_4 to persistentListOf(
+                                "All" to Queues(
+                                    general = Queue(
+                                        timeInMinutes = 50,
+                                        gate = "All",
+                                        terminal = "1",
+                                        queueType = QueueType.Reg,
+                                        queueOpen = true,
+                                        updateTime = Date(),
+                                        isWaitTimeAvailable = false,
+                                        status = "Open"
+                                    ),
+                                    preCheck = Queue(
+                                        timeInMinutes = 2,
+                                        gate = "All",
+                                        terminal = "1",
+                                        queueType = QueueType.TSAPre,
+                                        queueOpen = false,
+                                        updateTime = Date(),
+                                        isWaitTimeAvailable = false,
+                                        status = "Open"
+                                    )
                                 )
                             ),
-                            "30-39" to Queues(
-                                general = Queue(
-                                    timeInMinutes = 50,
-                                    gate = "10-18",
-                                    terminal = "1",
-                                    queueType = QueueType.Reg,
-                                    queueOpen = true,
-                                    updateTime = Date(),
-                                    isWaitTimeAvailable = true,
-                                    status = "Open",
-                                ),
-                                preCheck = Queue(
-                                    timeInMinutes = 2,
-                                    gate = "10-18",
-                                    terminal = "1",
-                                    queueType = QueueType.TSAPre,
-                                    queueOpen = true,
-                                    updateTime = Date(),
-                                    isWaitTimeAvailable = true,
-                                    status = "Open",
+                            Terminal.JFK_7 to persistentListOf(
+                                "All" to Queues(
+                                    general = Queue(
+                                        timeInMinutes = 50,
+                                        gate = "All",
+                                        terminal = "1",
+                                        queueType = QueueType.Reg,
+                                        queueOpen = true,
+                                        updateTime = Date(),
+                                        isWaitTimeAvailable = false,
+                                        status = "Open"
+                                    ),
+                                    preCheck = Queue(
+                                        timeInMinutes = 2,
+                                        gate = "All",
+                                        terminal = "1",
+                                        queueType = QueueType.TSAPre,
+                                        queueOpen = true,
+                                        updateTime = Date(),
+                                        isWaitTimeAvailable = false,
+                                        status = "Open"
+                                    )
                                 )
                             ),
-                        ),
-                        Terminal.EWR_A to listOf(),
-                        Terminal.EWR_B to listOf(),
-                        Terminal.EWR_C to listOf(),
-                        Terminal.JFK_4 to listOf(
-                            "All" to Queues(
-                                general = Queue(
-                                    timeInMinutes = 50,
-                                    gate = "All",
-                                    terminal = "1",
-                                    queueType = QueueType.Reg,
-                                    queueOpen = true,
-                                    updateTime = Date(),
-                                    isWaitTimeAvailable = false,
-                                    status = "Open",
-                                ),
-                                preCheck = Queue(
-                                    timeInMinutes = 2,
-                                    gate = "All",
-                                    terminal = "1",
-                                    queueType = QueueType.TSAPre,
-                                    queueOpen = false,
-                                    updateTime = Date(),
-                                    isWaitTimeAvailable = false,
-                                    status = "Open",
-                                )
-                            ),
-                        ),
-                        Terminal.JFK_7 to listOf(
-                            "All" to Queues(
-                                general = Queue(
-                                    timeInMinutes = 50,
-                                    gate = "All",
-                                    terminal = "1",
-                                    queueType = QueueType.Reg,
-                                    queueOpen = true,
-                                    updateTime = Date(),
-                                    isWaitTimeAvailable = false,
-                                    status = "Open",
-                                ),
-                                preCheck = Queue(
-                                    timeInMinutes = 2,
-                                    gate = "All",
-                                    terminal = "1",
-                                    queueType = QueueType.TSAPre,
-                                    queueOpen = true,
-                                    updateTime = Date(),
-                                    isWaitTimeAvailable = false,
-                                    status = "Open",
-                                )
-                            ),
-                        ),
-                        Terminal.LGA_C to listOf(),
-                        Terminal.LGA_D to listOf(),
+                            Terminal.LGA_C to persistentListOf(),
+                            Terminal.LGA_D to persistentListOf()
+                        )
                     )
-                )
-            ),
-            ConnectionState.Available,
-        )
+                ),
+                ConnectionState.Available
+            )
+        }
     }
 }

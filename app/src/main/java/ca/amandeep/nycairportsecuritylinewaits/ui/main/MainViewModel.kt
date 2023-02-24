@@ -7,6 +7,7 @@ import ca.amandeep.nycairportsecuritylinewaits.data.AirportCode
 import ca.amandeep.nycairportsecuritylinewaits.data.AirportRemoteDataSource
 import ca.amandeep.nycairportsecuritylinewaits.data.AirportRepository
 import com.github.ajalt.timberkt.d
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +23,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             ioDispatcher = Dispatchers.IO
         ),
         networkUpdateInterval = 5.minutes,
-        networkCacheTTL = 5.minutes,
+        networkCacheTTL = 5.minutes
     )
 
     fun getWaitTimes(airportCode: AirportCode): Flow<MainUiState> =
@@ -36,9 +37,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                             .mapValues { Queues(it.value.sortedBy { it.queueType }) }
                             .toList()
                             .sortedBy { it.first }
+                            .toImmutableList()
                     }
                     .toList()
                     .sortedBy { it.first }
+                    .toImmutableList()
 
                 d { "Got ${queues.size} UI terminals" }
 

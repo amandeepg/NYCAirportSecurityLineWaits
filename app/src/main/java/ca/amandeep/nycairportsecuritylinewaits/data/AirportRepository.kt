@@ -15,7 +15,7 @@ import kotlin.time.Duration
 class AirportRepository(
     private val airportRemoteDataSource: AirportRemoteDataSource,
     private val networkUpdateInterval: Duration,
-    private val networkCacheTTL: Duration,
+    private val networkCacheTTL: Duration
 ) {
     private var refreshAirportFlow = MutableSharedFlow<AirportCode>()
     private val airportsCache = mutableMapOf<AirportCode, Result>()

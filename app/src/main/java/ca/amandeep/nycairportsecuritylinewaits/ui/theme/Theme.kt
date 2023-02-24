@@ -15,6 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -32,13 +34,14 @@ fun NYCAirportSecurityLineWaitsTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit
 ) {
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
+
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
@@ -80,12 +83,21 @@ fun NYCAirportSecurityLineWaitsTheme(
 fun Card3(
     modifier: Modifier = Modifier,
     elevation: Dp = 1.dp,
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit
 ) {
     Card(
         modifier = modifier,
         elevation = elevation,
-        backgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(0.dp),
+        backgroundColor =
+        if (isSystemInDarkTheme()) {
+            MaterialTheme.colorScheme.surface
+        } else {
+            lerp(
+                MaterialTheme.colorScheme.surface,
+                Color(0xFF7E7E7E),
+                0.07f
+            )
+        }
     ) {
         ProvideTextStyle(TextStyle(color = MaterialTheme.colorScheme.onSurface)) {
             CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {

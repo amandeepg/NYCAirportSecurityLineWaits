@@ -57,7 +57,7 @@ private class DateAdapter : JsonAdapter<Date>() {
 enum class AirportCode(
     val shortCode: String,
     val shortName: String,
-    val fullName: String,
+    val fullName: String
 ) {
     EWR("EWR", "Newark", "Newark Liberty International Airport"),
     JFK("JFK", "Kennedy", "John F. Kennedy International Airport"),

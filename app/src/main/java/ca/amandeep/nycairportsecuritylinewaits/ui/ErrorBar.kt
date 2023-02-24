@@ -34,9 +34,10 @@ import ca.amandeep.nycairportsecuritylinewaits.util.ConnectionState
 fun ErrorBar(
     connectivityState: ConnectionState,
     minsAgo: Long,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight(align = Alignment.CenterVertically)
             .background(color = MaterialTheme.colorScheme.errorContainer)
@@ -67,7 +68,7 @@ fun ErrorBar(
                 text = "$errorText, below is the last known information from $minsAgo mins ago",
                 fontSize = MaterialTheme.typography.labelSmall.fontSize,
                 lineHeight = MaterialTheme.typography.labelSmall.lineHeight,
-                color = MaterialTheme.colorScheme.onErrorContainer,
+                color = MaterialTheme.colorScheme.onErrorContainer
             )
         }
     }
@@ -85,6 +86,6 @@ private fun ErrorBarPreview(
 class SampleConnectionStateProvider : PreviewParameterProvider<ConnectionState> {
     override val values = sequenceOf(
         ConnectionState.Available,
-        ConnectionState.Unavailable,
+        ConnectionState.Unavailable
     )
 }

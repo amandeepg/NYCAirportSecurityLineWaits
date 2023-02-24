@@ -3,6 +3,8 @@ package ca.amandeep.nycairportsecuritylinewaits.ui.main
 import ca.amandeep.nycairportsecuritylinewaits.data.model.Queue
 import ca.amandeep.nycairportsecuritylinewaits.data.model.QueueType
 import ca.amandeep.nycairportsecuritylinewaits.data.model.Terminal
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 sealed interface MainUiState {
     data class Valid(
@@ -16,7 +18,8 @@ sealed interface MainUiState {
 }
 
 data class Airport(
-    val terminals: List<Pair<Terminal, List<Pair<String, Queues>>>> = emptyList()
+    val terminals: ImmutableList<Pair<Terminal, ImmutableList<Pair<String, Queues>>>> =
+        persistentListOf()
 )
 
 data class Queues(
