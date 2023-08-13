@@ -1,17 +1,20 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'org.jlleitschuh.gradle.ktlint'
+    id 'kotlin-parcelize'
+    id 'org.jmailen.kotlinter'
     id 'com.google.devtools.ksp'
+    id 'de.mannodermaus.android-junit5'
+    id 'app.cash.licensee'
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "ca.amandeep.nycairportsecuritylinewaits"
         minSdk 29
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -38,6 +41,10 @@ android {
     kotlinOptions {
         jvmTarget = '11'
         freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+        freeCompilerArgs += "-P"
+        freeCompilerArgs += "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" + project.buildDir.absolutePath + "/compose_compiler"
+        freeCompilerArgs += "-P"
+        freeCompilerArgs += "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" + project.buildDir.absolutePath + "/compose_compiler"
     }
     buildFeatures {
         compose true
@@ -65,21 +72,24 @@ dependencies {
     implementation AndroidX.lifecycle.runtime.ktx
     implementation AndroidX.lifecycle.viewModelKtx
     implementation AndroidX.navigation.compose
-    implementation "org.jetbrains.kotlinx:kotlinx-collections-immutable:_"
+    implementation KotlinX.collections.immutable
 
     implementation Square.moshi.adapters
     implementation Square.moshi
-    ksp "com.squareup.moshi:moshi-kotlin-codegen:_"
+    ksp Square.moshi.kotlinCodegen
     implementation Square.retrofit2.converter.moshi
     implementation Square.retrofit2
-
-    implementation Google.accompanist.navigationAnimation
 
     implementation 'com.github.ajalt:timberkt:_'
     implementation JakeWharton.timber
 
     implementation AndroidX.compose.ui.tooling
     debugImplementation AndroidX.compose.ui.toolingPreview
+}
 
-    ktlintRuleset "io.nlopez.compose.rules:ktlint:_"
+licensee {
+    allow 'Apache-2.0'
+    allowUrl('https://developer.android.com/studio/terms.html') {
+        because 'Android Software Development Kit License Agreement'
+    }
 }

@@ -1,5 +1,5 @@
 @file:OptIn(
-    ExperimentalAnimationApi::class
+    ExperimentalAnimationApi::class,
 )
 
 package ca.amandeep.nycairportsecuritylinewaits.ui
@@ -100,20 +100,20 @@ private data class PreId(val i: Int = -1)
 fun AirportScreen(
     uiState: MainUiState.Valid,
     connectivityState: ConnectionState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier.fillMaxHeight()) {
         item {
             AnimatedVisibility(
                 visible = uiState.hasError,
                 enter = expandVertically(),
-                exit = shrinkVertically()
+                exit = shrinkVertically(),
             ) {
                 ErrorBar(
                     connectivityState = connectivityState,
                     minsAgo = TimeUnit.MILLISECONDS.toMinutes(
-                        System.currentTimeMillis() - uiState.lastUpdated
-                    )
+                        System.currentTimeMillis() - uiState.lastUpdated,
+                    ),
                 )
             }
         }
@@ -121,7 +121,7 @@ fun AirportScreen(
             Card3(
                 Modifier
                     .padding(horizontal = 15.dp, vertical = 9.dp),
-                elevation = 5.dp
+                elevation = 5.dp,
             ) {
                 LoadedAirportCard(gates, terminal)
             }
@@ -134,12 +134,12 @@ private const val SHOW_TERMINAL_ICONS = false
 @Composable
 private fun LoadedAirportCard(
     gates: ImmutableList<Pair<String, Queues>>,
-    terminal: Terminal
+    terminal: Terminal,
 ) {
     Column(Modifier.fillMaxWidth()) {
         Row(
             Modifier.padding(5.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             if (terminal != Terminal.SWF_MAIN && SHOW_TERMINAL_ICONS) {
                 Text(
@@ -156,33 +156,33 @@ private fun LoadedAirportCard(
                                 Terminal.EWR_B -> m.roundedTerminalHeader(
                                     TERMINAL_BLUE,
                                     whiteBorder,
-                                    shiftedDown = true
+                                    shiftedDown = true,
                                 )
 
                                 Terminal.EWR_C -> m.roundedTerminalHeader(
                                     TERMINAL_GREEN,
-                                    whiteBorder
+                                    whiteBorder,
                                 )
 
                                 Terminal.JFK_1, Terminal.JFK_2, Terminal.LGA_B -> m.squareTerminalHeader(
                                     TERMINAL_GREEN,
-                                    whiteBorder
+                                    whiteBorder,
                                 )
 
                                 Terminal.JFK_4 -> m.squareTerminalHeader(TERMINAL_BLUE, whiteBorder)
                                 Terminal.JFK_5 -> m.squareTerminalHeader(
                                     TERMINAL_YELLOW,
-                                    Color.Black
+                                    Color.Black,
                                 )
 
                                 Terminal.JFK_7, Terminal.LGA_D -> m.squareTerminalHeader(
                                     TERMINAL_MUSTARD,
-                                    Color.Black
+                                    Color.Black,
                                 )
 
                                 Terminal.JFK_8, Terminal.LGA_C -> m.squareTerminalHeader(
                                     TERMINAL_RED,
-                                    whiteBorder
+                                    whiteBorder,
                                 )
 
                                 Terminal.LGA_A -> m.squareTerminalHeader(TERMINAL_BLUE, whiteBorder)
@@ -190,7 +190,7 @@ private fun LoadedAirportCard(
                             }
                         }
                         .badgeLayout(
-                            offsetX = if (terminal == Terminal.EWR_B) 3.dp.value.toInt() else 0
+                            offsetX = if (terminal == Terminal.EWR_B) 3.dp.value.toInt() else 0,
                         ),
                     fontSize = when (terminal) {
                         Terminal.EWR_A, Terminal.EWR_B, Terminal.EWR_C -> 20.sp
@@ -199,11 +199,12 @@ private fun LoadedAirportCard(
                     color = when (terminal) {
                         Terminal.JFK_5,
                         Terminal.JFK_7,
-                        Terminal.LGA_D -> Color.Black
+                        Terminal.LGA_D,
+                        -> Color.Black
 
                         else -> if (isSystemInDarkTheme()) LocalContentColor.current else Color.White
                     },
-                    fontWeight = if (terminal == Terminal.EWR_B) FontWeight.SemiBold else FontWeight.Black
+                    fontWeight = if (terminal == Terminal.EWR_B) FontWeight.SemiBold else FontWeight.Black,
                 )
                 Spacer(Modifier.width(10.dp))
             }
@@ -213,11 +214,11 @@ private fun LoadedAirportCard(
                     else -> stringResource(R.string.terminal) + terminal.identifier
                 },
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
         }
         val gateHeaderStyle = Typography.labelMedium.copy(
-            color = Typography.labelMedium.color
+            color = Typography.labelMedium.color,
         )
         val singleGateGroup =
             gates.firstOrNull()?.first?.startsWith("all", ignoreCase = true) == true
@@ -289,7 +290,7 @@ private fun LoadedAirportCard(
                                     gateRefs[i - 1],
                                     generalRefs[i - 1],
                                     preRefs[i - 1],
-                                    margin = (-MIN_OFFSET / 2).dp
+                                    margin = (-MIN_OFFSET / 2).dp,
                                 )
                             } else {
                                 null
@@ -336,7 +337,7 @@ private fun LoadedAirportCard(
             }
             ConstraintLayout(
                 constraintSet = constraintSet,
-                Modifier.padding(10.dp)
+                Modifier.padding(10.dp),
             ) {
                 if (!singleGateGroup) {
                     Text(
@@ -344,7 +345,7 @@ private fun LoadedAirportCard(
                         Modifier
                             .layoutId(GatesId())
                             .alpha(0.7f),
-                        style = gateHeaderStyle
+                        style = gateHeaderStyle,
                     )
                 }
                 GeneralLabel(gateHeaderStyle)
@@ -362,7 +363,7 @@ private fun LoadedAirportCard(
                             },
                             Modifier
                                 .layoutId(GatesId(i))
-                                .alpha(if (queues.bothClosed) CLOSED_ALPHA else 1f)
+                                .alpha(if (queues.bothClosed) CLOSED_ALPHA else 1f),
                         )
                     }
                     QueuesMins(i, queues, showEmptyPrecheckInGrid = true)
@@ -381,27 +382,27 @@ private fun PrecheckLabel() {
             .widthIn(min = 40.dp)
             .alpha(0.7f),
         painter = painterResource(id = R.drawable.ic_pre),
-        contentDescription = stringResource(R.string.precheck)
+        contentDescription = stringResource(R.string.precheck),
     )
 }
 
 @Composable
 private fun GeneralLabel(
-    gateHeaderStyle: TextStyle
+    gateHeaderStyle: TextStyle,
 ) {
     Text(
         stringResource(R.string.general_line),
         Modifier
             .layoutId(GeneralId())
             .alpha(0.7f),
-        style = gateHeaderStyle
+        style = gateHeaderStyle,
     )
 }
 
 private fun Modifier.roundedTerminalHeader(
     backgroundColor: Color,
     foregroundColor: Color,
-    shiftedDown: Boolean = false
+    shiftedDown: Boolean = false,
 ) =
     drawBehind {
         drawStrokedRoundedTriangle(backgroundColor, foregroundColor, shiftedDown)
@@ -410,28 +411,28 @@ private fun Modifier.roundedTerminalHeader(
 private fun DrawScope.drawStrokedRoundedTriangle(
     backgroundColor: Color,
     foregroundColor: Color,
-    shiftedDown: Boolean
+    shiftedDown: Boolean,
 ) {
     drawRoundedTriangle(
         backgroundColor = backgroundColor,
-        shiftedDown = shiftedDown
+        shiftedDown = shiftedDown,
     )
     drawRoundedTriangle(
         factor = 0.97f,
         backgroundColor = foregroundColor,
-        shiftedDown = shiftedDown
+        shiftedDown = shiftedDown,
     )
     drawRoundedTriangle(
         factor = 0.86f,
         backgroundColor = backgroundColor,
-        shiftedDown = shiftedDown
+        shiftedDown = shiftedDown,
     )
 }
 
 private fun DrawScope.drawRoundedTriangle(
     factor: Float = 1f,
     backgroundColor: Color,
-    shiftedDown: Boolean
+    shiftedDown: Boolean,
 ) {
     val factorX = 2.2f * factor
     val factorY = 2.0f * factor
@@ -439,9 +440,9 @@ private fun DrawScope.drawRoundedTriangle(
     val rect = Rect(
         offset = Offset(
             x = -size.width * (factorX - 1f) / 2f,
-            y = -size.height * (factorY - 1f) / 2f - size.height * offsetFactorY
+            y = -size.height * (factorY - 1f) / 2f - size.height * offsetFactorY,
         ),
-        size = Size(size.width * factorX, size.height * factorY)
+        size = Size(size.width * factorX, size.height * factorY),
     )
     val trianglePath = Path().apply {
         moveTo(rect.topCenter)
@@ -459,7 +460,7 @@ private fun DrawScope.drawRoundedTriangle(
                 color = backgroundColor
                 pathEffect =
                     PathEffect.cornerPathEffect(rect.maxDimension / 1.5f)
-            }
+            },
         )
     }
 }
@@ -470,11 +471,11 @@ private fun Path.lineTo(offset: Offset) = lineTo(offset.x, offset.y)
 private fun Modifier.squareTerminalHeader(backgroundColor: Color, foregroundColor: Color) =
     background(
         shape = RectangleShape,
-        color = backgroundColor
+        color = backgroundColor,
     ).border(
         0.5.dp,
         shape = RectangleShape,
-        color = foregroundColor
+        color = foregroundColor,
     )
 
 private fun Modifier.badgeLayout(offsetX: Int = 0, offsetY: Int = 0) =
@@ -485,21 +486,21 @@ private fun Modifier.badgeLayout(offsetX: Int = 0, offsetY: Int = 0) =
         layout(width, width) {
             placeable.place(
                 x = (width - placeable.width) / 2 + offsetX,
-                y = (-18.sp.value.toInt() / 1.5f).toInt() + offsetY
+                y = (-18.sp.value.toInt() / 1.5f).toInt() + offsetY,
             )
         }
     }
 
 private fun ConstraintLayoutBaseScope.createEndBarrier(
     elements: List<ConstrainedLayoutReference>,
-    margin: Dp = 0.dp
+    margin: Dp = 0.dp,
 ) = createEndBarrier(*elements.toTypedArray(), margin = margin)
 
 @Composable
 private fun QueuesMins(
     i: Int,
     queues: Queues,
-    showEmptyPrecheckInGrid: Boolean
+    showEmptyPrecheckInGrid: Boolean,
 ) {
     if (queues.general.queueOpen) {
         Time(GeneralId(i), queues.general.timeInMinutes)
@@ -512,7 +513,7 @@ private fun QueuesMins(
             fontSize = 18.sp,
             maxLines = 1,
             fontStyle = FontStyle.Italic,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
         )
     }
     if (queues.preCheck?.queueOpen == true) {
@@ -525,15 +526,15 @@ private fun QueuesMins(
 @Composable
 private fun Time(
     id: Any,
-    targetTime: Int
+    targetTime: Int,
 ) {
     Crossfade(
         targetState = targetTime,
-        Modifier.layoutId(id)
+        Modifier.layoutId(id),
     ) { time ->
         Column(
             modifier = Modifier.alpha(if (time < 0) 0f else 1f),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             val color = when {
                 time < 10 -> if (isSystemInDarkTheme()) {
@@ -559,7 +560,7 @@ private fun Time(
                 fontSize = 30.sp,
                 color = color,
                 maxLines = 1,
-                fontWeight = FontWeight.Black
+                fontWeight = FontWeight.Black,
             )
             Text(
                 when (time) {
@@ -571,8 +572,8 @@ private fun Time(
                     .offset(y = (-MIN_OFFSET).dp)
                     .animateContentSize(),
                 style = Typography.labelSmall.copy(
-                    fontWeight = FontWeight.Light
-                )
+                    fontWeight = FontWeight.Light,
+                ),
             )
         }
     }
@@ -599,7 +600,7 @@ private fun AirportPreview() {
                                         queueOpen = false,
                                         updateTime = Date(),
                                         isWaitTimeAvailable = false,
-                                        status = "Open"
+                                        status = "Open",
                                     ),
                                     preCheck = Queue(
                                         timeInMinutes = 2,
@@ -609,8 +610,8 @@ private fun AirportPreview() {
                                         queueOpen = false,
                                         updateTime = Date(),
                                         isWaitTimeAvailable = false,
-                                        status = "Open"
-                                    )
+                                        status = "Open",
+                                    ),
                                 ),
                                 "20-28" to Queues(
                                     general = Queue(
@@ -621,7 +622,7 @@ private fun AirportPreview() {
                                         queueOpen = true,
                                         updateTime = Date(),
                                         isWaitTimeAvailable = true,
-                                        status = "Open"
+                                        status = "Open",
                                     ),
                                     preCheck = Queue(
                                         timeInMinutes = 20,
@@ -631,8 +632,8 @@ private fun AirportPreview() {
                                         queueOpen = true,
                                         updateTime = Date(),
                                         isWaitTimeAvailable = true,
-                                        status = "Open"
-                                    )
+                                        status = "Open",
+                                    ),
                                 ),
                                 "30-39" to Queues(
                                     general = Queue(
@@ -643,7 +644,7 @@ private fun AirportPreview() {
                                         queueOpen = true,
                                         updateTime = Date(),
                                         isWaitTimeAvailable = true,
-                                        status = "Open"
+                                        status = "Open",
                                     ),
                                     preCheck = Queue(
                                         timeInMinutes = 2,
@@ -653,9 +654,9 @@ private fun AirportPreview() {
                                         queueOpen = true,
                                         updateTime = Date(),
                                         isWaitTimeAvailable = true,
-                                        status = "Open"
-                                    )
-                                )
+                                        status = "Open",
+                                    ),
+                                ),
                             ),
                             Terminal.EWR_A to persistentListOf(),
                             Terminal.EWR_B to persistentListOf(),
@@ -670,7 +671,7 @@ private fun AirportPreview() {
                                         queueOpen = true,
                                         updateTime = Date(),
                                         isWaitTimeAvailable = false,
-                                        status = "Open"
+                                        status = "Open",
                                     ),
                                     preCheck = Queue(
                                         timeInMinutes = 2,
@@ -680,9 +681,9 @@ private fun AirportPreview() {
                                         queueOpen = false,
                                         updateTime = Date(),
                                         isWaitTimeAvailable = false,
-                                        status = "Open"
-                                    )
-                                )
+                                        status = "Open",
+                                    ),
+                                ),
                             ),
                             Terminal.JFK_7 to persistentListOf(
                                 "All" to Queues(
@@ -694,7 +695,7 @@ private fun AirportPreview() {
                                         queueOpen = true,
                                         updateTime = Date(),
                                         isWaitTimeAvailable = false,
-                                        status = "Open"
+                                        status = "Open",
                                     ),
                                     preCheck = Queue(
                                         timeInMinutes = 2,
@@ -704,16 +705,16 @@ private fun AirportPreview() {
                                         queueOpen = true,
                                         updateTime = Date(),
                                         isWaitTimeAvailable = false,
-                                        status = "Open"
-                                    )
-                                )
+                                        status = "Open",
+                                    ),
+                                ),
                             ),
                             Terminal.LGA_C to persistentListOf(),
-                            Terminal.LGA_D to persistentListOf()
-                        )
-                    )
+                            Terminal.LGA_D to persistentListOf(),
+                        ),
+                    ),
                 ),
-                ConnectionState.Available
+                ConnectionState.Available,
             )
         }
     }

@@ -20,10 +20,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val airportRepository = AirportRepository(
         airportRemoteDataSource = AirportRemoteDataSource(
             airportApi = AirportApiService.INSTANCE,
-            ioDispatcher = Dispatchers.IO
+            ioDispatcher = Dispatchers.IO,
         ),
         networkUpdateInterval = 5.minutes,
-        networkCacheTTL = 5.minutes
+        networkCacheTTL = 5.minutes,
     )
 
     fun getWaitTimes(airportCode: AirportCode): Flow<MainUiState> =
@@ -50,7 +50,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 } else {
                     MainUiState.Valid(
                         lastUpdated = result.metadata.lastUpdated,
-                        airport = Airport(queues)
+                        airport = Airport(queues),
                     )
                 }
             }

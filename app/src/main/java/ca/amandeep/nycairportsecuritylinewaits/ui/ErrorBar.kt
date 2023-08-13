@@ -35,7 +35,7 @@ import ca.amandeep.nycairportsecuritylinewaits.util.ConnectionState
 fun ErrorBar(
     connectivityState: ConnectionState,
     minsAgo: Long,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
@@ -44,20 +44,20 @@ fun ErrorBar(
             .background(color = MaterialTheme.colorScheme.errorContainer)
             .padding(10.dp),
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             painter = painterResource(
                 id = when (connectivityState) {
                     ConnectionState.Available -> R.drawable.ic_sync_error
                     ConnectionState.Unavailable -> R.drawable.ic_wifi_off
-                }
+                },
             ),
             modifier = Modifier
                 .size(20.dp)
                 .alignByBaseline(),
             contentDescription = stringResource(R.string.error_icon),
-            tint = MaterialTheme.colorScheme.onErrorContainer
+            tint = MaterialTheme.colorScheme.onErrorContainer,
         )
         Spacer(Modifier.width(10.dp))
         Crossfade(targetState = connectivityState) {
@@ -69,7 +69,7 @@ fun ErrorBar(
                 text = errorText + stringResource(R.string.last_known_information, minsAgo),
                 fontSize = MaterialTheme.typography.labelSmall.fontSize,
                 lineHeight = MaterialTheme.typography.labelSmall.lineHeight,
-                color = MaterialTheme.colorScheme.onErrorContainer
+                color = MaterialTheme.colorScheme.onErrorContainer,
             )
         }
     }
@@ -79,7 +79,7 @@ fun ErrorBar(
 @Preview(name = "Light", showBackground = true, widthDp = 300)
 @Preview(name = "Dark", showBackground = true, widthDp = 300, uiMode = UI_MODE_NIGHT_YES)
 private fun ErrorBarPreview(
-    @PreviewParameter(SampleConnectionStateProvider::class) connectivityState: ConnectionState
+    @PreviewParameter(SampleConnectionStateProvider::class) connectivityState: ConnectionState,
 ) {
     NYCAirportSecurityLineWaitsTheme { ErrorBar(connectivityState, 12L) }
 }
@@ -87,6 +87,6 @@ private fun ErrorBarPreview(
 class SampleConnectionStateProvider : PreviewParameterProvider<ConnectionState> {
     override val values = sequenceOf(
         ConnectionState.Available,
-        ConnectionState.Unavailable
+        ConnectionState.Unavailable,
     )
 }

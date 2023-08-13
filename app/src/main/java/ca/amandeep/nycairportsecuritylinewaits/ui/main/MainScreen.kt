@@ -1,7 +1,7 @@
 @file:OptIn(
     ExperimentalAnimationApi::class,
     ExperimentalMaterial3Api::class,
-    ExperimentalMaterialApi::class
+    ExperimentalMaterialApi::class,
 )
 
 package ca.amandeep.nycairportsecuritylinewaits.ui.main
@@ -60,15 +60,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import ca.amandeep.nycairportsecuritylinewaits.R
 import ca.amandeep.nycairportsecuritylinewaits.data.AirportCode
 import ca.amandeep.nycairportsecuritylinewaits.ui.AirportScreen
 import ca.amandeep.nycairportsecuritylinewaits.ui.ErrorScreen
 import ca.amandeep.nycairportsecuritylinewaits.util.ConnectionState
 import ca.amandeep.nycairportsecuritylinewaits.util.observeConnectivity
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -78,27 +78,27 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
-    mainViewModel: MainViewModel = viewModel()
+    mainViewModel: MainViewModel = viewModel(),
 ) {
     var titleAirportCode by remember { mutableStateOf<AirportCode?>(null) }
-    val navController = rememberAnimatedNavController()
+    val navController = rememberNavController()
     Scaffold(
         modifier = modifier,
-        topBar = { TitleAndBackBar(titleAirportCode, navController) }
+        topBar = { TitleAndBackBar(titleAirportCode, navController) },
     ) { innerPadding ->
         Box(
             Modifier.fillMaxSize(),
-            contentAlignment = Alignment.BottomCenter
+            contentAlignment = Alignment.BottomCenter,
         ) {
             Icon(
                 modifier = Modifier
                     .size(130.dp)
                     .alpha(0.15f),
                 painter = painterResource(id = R.drawable.statue_of_liberty),
-                contentDescription = null
+                contentDescription = null,
             )
         }
-        AnimatedNavHost(navController = navController, startDestination = "selection") {
+        NavHost(navController = navController, startDestination = "selection") {
             slideAnimatedComposable("selection") {
                 // Clear the title when we navigate to the main selection screen
                 LaunchedEffect(Unit) {
@@ -133,24 +133,24 @@ fun MainScreen(
                     // If there's an error, show the last valid state, but with an error flag
                     val uiState = setAndComputeLastGoodState(
                         uiStateFlow = uiStateFlow,
-                        forceUpdate = forceRefresh
+                        forceUpdate = forceRefresh,
                     )
 
                     val ptrState = rememberPullRefreshState(
                         refreshing = refreshing,
-                        onRefresh = forceRefresh
+                        onRefresh = forceRefresh,
                     )
 
                     Box(
                         Modifier
                             .padding(innerPadding)
-                            .pullRefresh(ptrState)
+                            .pullRefresh(ptrState),
                     ) {
                         MainScreenContent(uiState, forceRefresh)
                         PullRefreshIndicator(
                             refreshing = refreshing,
                             state = ptrState,
-                            modifier = Modifier.align(Alignment.TopCenter)
+                            modifier = Modifier.align(Alignment.TopCenter),
                         )
                     }
                 }
@@ -162,7 +162,7 @@ fun MainScreen(
 @Composable
 private fun setAndComputeLastGoodState(
     uiStateFlow: Flow<MainUiState>,
-    forceUpdate: () -> Unit
+    forceUpdate: () -> Unit,
 ): MainUiState {
     val uiState by uiStateFlow.collectAsStateWithLifecycle(initialValue = MainUiState.Loading)
 
@@ -175,7 +175,7 @@ private fun setAndComputeLastGoodState(
             lastGoodState.copy(hasError = true)
         } else {
             uiState
-        }
+        },
     )
 
     return lastGoodState
@@ -185,7 +185,7 @@ private fun setAndComputeLastGoodState(
 @Composable
 private fun MainScreenContent(
     uiState: MainUiState,
-    forceUpdate: () -> Unit
+    forceUpdate: () -> Unit,
 ) {
     val connectivityState by LocalContext.current.observeConnectivity()
         .collectAsStateWithLifecycle(initialValue = ConnectionState.Available)
@@ -193,15 +193,18 @@ private fun MainScreenContent(
     if (uiState == MainUiState.Error) {
         ErrorScreen(
             connectivityState = connectivityState,
-            forceUpdate = forceUpdate
+            forceUpdate = forceUpdate,
         )
     } else {
-        Crossfade(targetState = uiState == MainUiState.Loading) { isLoading ->
+        Crossfade(
+            targetState = uiState == MainUiState.Loading,
+            label = "main crossfade",
+        ) { isLoading ->
             when (isLoading) {
                 true -> LoadingScreen()
                 false -> AirportScreen(
                     uiState = uiState as MainUiState.Valid,
-                    connectivityState = connectivityState
+                    connectivityState = connectivityState,
                 )
             }
         }
@@ -213,7 +216,7 @@ private fun LoadingScreen() {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         CircularProgressIndicator()
         Spacer(Modifier.height(10.dp))
@@ -224,12 +227,15 @@ private fun LoadingScreen() {
 @Composable
 private fun TitleAndBackBar(
     titleAirportCode: AirportCode?,
-    navController: NavHostController
+    navController: NavHostController,
 ) = TopAppBar(
     // Title that shows the airport code and name when an airport is selected
     // and the title of the app when no airport is selected
     title = {
-        Crossfade(targetState = titleAirportCode) { title ->
+        Crossfade(
+            targetState = titleAirportCode,
+            label = "title crossfade",
+        ) { title ->
             Column {
                 Text(title?.shortCode ?: stringResource(id = R.string.app_name))
                 Text(title?.fullName.orEmpty(), fontSize = 13.sp)
@@ -243,17 +249,17 @@ private fun TitleAndBackBar(
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.back)
+                        contentDescription = stringResource(R.string.back),
                     )
                 }
             }
         }
-    }
+    },
 )
 
 fun NavGraphBuilder.slideAnimatedComposable(
     route: String,
-    content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit
+    content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit,
 ) {
     val animationSpec = tween<IntOffset>(400)
     composable(
@@ -261,28 +267,28 @@ fun NavGraphBuilder.slideAnimatedComposable(
         enterTransition = {
             slideInHorizontally(
                 initialOffsetX = { it },
-                animationSpec = animationSpec
+                animationSpec = animationSpec,
             )
         },
         exitTransition = {
             slideOutHorizontally(
                 targetOffsetX = { -it },
-                animationSpec = animationSpec
+                animationSpec = animationSpec,
             )
         },
         popEnterTransition = {
             slideInHorizontally(
                 initialOffsetX = { -it },
-                animationSpec = animationSpec
+                animationSpec = animationSpec,
             )
         },
         popExitTransition = {
             slideOutHorizontally(
                 targetOffsetX = { it },
-                animationSpec = animationSpec
+                animationSpec = animationSpec,
             )
         },
-        content = content
+        content = content,
     )
 }
 
@@ -291,13 +297,13 @@ private const val REMOVE_SWF = true
 @Composable
 fun Selection(
     navigateTo: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier
             .fillMaxSize()
             .padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(40.dp, BiasAlignment.Vertical(-0.4f))
+        verticalArrangement = Arrangement.spacedBy(40.dp, BiasAlignment.Vertical(-0.4f)),
     ) {
         AirportCode.values().toList().let {
             if (REMOVE_SWF) {
@@ -309,16 +315,16 @@ fun Selection(
             Column(
                 Modifier
                     .fillMaxWidth()
-                    .clickable { navigateTo(it.shortCode) }
+                    .clickable { navigateTo(it.shortCode) },
             ) {
                 Text(
                     it.shortName,
                     fontWeight = FontWeight.Black,
                     fontSize = 60.sp,
-                    fontStyle = FontStyle.Italic
+                    fontStyle = FontStyle.Italic,
                 )
                 Text(
-                    it.fullName
+                    it.fullName,
                 )
             }
         }

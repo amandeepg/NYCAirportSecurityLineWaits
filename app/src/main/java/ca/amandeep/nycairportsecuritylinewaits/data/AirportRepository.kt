@@ -15,7 +15,7 @@ import kotlin.time.Duration
 class AirportRepository(
     private val airportRemoteDataSource: AirportRemoteDataSource,
     private val networkUpdateInterval: Duration,
-    private val networkCacheTTL: Duration
+    private val networkCacheTTL: Duration,
 ) {
     private var refreshAirportFlow = MutableSharedFlow<AirportCode>()
     private val airportsCache = mutableMapOf<AirportCode, Result>()
@@ -23,7 +23,7 @@ class AirportRepository(
     fun getWaitTimes(airportCode: AirportCode): Flow<Result> =
         merge(
             tickFlow(networkUpdateInterval).onEach { d { "tick for $airportCode" } },
-            refreshAirportFlow.filter { it == airportCode }.onEach { d { "refresh $it" } }.map {}
+            refreshAirportFlow.filter { it == airportCode }.onEach { d { "refresh $it" } }.map {},
         ).map {
             airportRemoteDataSource.getWaitTimes(airportCode.shortCode)
                 .let {
@@ -48,10 +48,10 @@ class AirportRepository(
 
     data class Result(
         val metadata: Metadata,
-        val queues: List<Queue>
+        val queues: List<Queue>,
     ) {
         data class Metadata(
-            val lastUpdated: Long
+            val lastUpdated: Long,
         )
     }
 }

@@ -10,7 +10,7 @@ sealed interface MainUiState {
     data class Valid(
         val lastUpdated: Long,
         val airport: Airport,
-        val hasError: Boolean = false
+        val hasError: Boolean = false,
     ) : MainUiState
 
     object Error : MainUiState
@@ -19,16 +19,16 @@ sealed interface MainUiState {
 
 data class Airport(
     val terminals: ImmutableList<Pair<Terminal, ImmutableList<Pair<String, Queues>>>> =
-        persistentListOf()
+        persistentListOf(),
 )
 
 data class Queues(
     val general: Queue,
-    val preCheck: Queue?
+    val preCheck: Queue?,
 ) {
     constructor(queues: List<Queue>) : this(
         general = queues.find { it.queueType == QueueType.Reg }!!,
-        preCheck = queues.find { it.queueType == QueueType.TSAPre }
+        preCheck = queues.find { it.queueType == QueueType.TSAPre },
     )
 
     val bothClosed = !general.queueOpen && preCheck?.queueOpen != true

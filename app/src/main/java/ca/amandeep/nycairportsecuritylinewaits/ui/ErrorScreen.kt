@@ -33,14 +33,14 @@ import ca.amandeep.nycairportsecuritylinewaits.util.ConnectionState
 fun ErrorScreen(
     connectivityState: ConnectionState,
     forceUpdate: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(20.dp),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         when (connectivityState) {
             ConnectionState.Unavailable -> {
@@ -48,7 +48,7 @@ fun ErrorScreen(
                     modifier = Modifier.size(100.dp),
                     painter = painterResource(id = R.drawable.ic_wifi_off),
                     contentDescription = stringResource(R.string.no_internet_icon),
-                    tint = MaterialTheme.colorScheme.onBackground
+                    tint = MaterialTheme.colorScheme.onBackground,
                 )
                 Spacer(Modifier.height(30.dp))
                 Text(
@@ -56,7 +56,7 @@ fun ErrorScreen(
                     fontSize = MaterialTheme.typography.headlineMedium.fontSize,
                     lineHeight = MaterialTheme.typography.headlineMedium.lineHeight,
                     color = MaterialTheme.colorScheme.onBackground,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             }
             ConnectionState.Available -> {
@@ -65,7 +65,7 @@ fun ErrorScreen(
                     fontSize = MaterialTheme.typography.headlineMedium.fontSize,
                     lineHeight = MaterialTheme.typography.headlineMedium.lineHeight,
                     color = MaterialTheme.colorScheme.onBackground,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
                 Spacer(Modifier.height(25.dp))
                 FilledTonalButton(onClick = forceUpdate) {
@@ -80,12 +80,12 @@ fun ErrorScreen(
 @Preview(name = "Light", showBackground = true)
 @Preview(name = "Dark", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 private fun ErrorScreenPreview(
-    @PreviewParameter(SampleConnectionStateProvider::class) connectivityState: ConnectionState
+    @PreviewParameter(SampleConnectionStateProvider::class) connectivityState: ConnectionState,
 ) {
     NYCAirportSecurityLineWaitsTheme {
         ErrorScreen(
             connectivityState = connectivityState,
-            forceUpdate = {}
+            forceUpdate = {},
         )
     }
 }
