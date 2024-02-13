@@ -11,7 +11,6 @@ import ca.amandeep.nycairportsecuritylinewaits.ui.main.MainScreen
 import ca.amandeep.nycairportsecuritylinewaits.ui.theme.NYCAirportSecurityLineWaitsTheme
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

@@ -16,10 +16,11 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 interface AirportApiService {
-
     @Headers("Referer: https://www.jfkairport.com/")
     @GET("SecurityWaitTimesPoints/{airport}")
-    suspend fun getWaitTimes(@Path("airport") airport: String): List<Queue>
+    suspend fun getWaitTimes(
+        @Path("airport") airport: String,
+    ): List<Queue>
 
     companion object {
         private const val API_PATH = "https://avi-prod-mpp-webapp-api.azurewebsites.net/api/v1/"

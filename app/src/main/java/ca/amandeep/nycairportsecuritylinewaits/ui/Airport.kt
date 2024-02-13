@@ -93,7 +93,9 @@ private val TERMINAL_YELLOW = Color(248, 207, 70)
 private val TERMINAL_MUSTARD = Color(243, 167, 59)
 
 private data class GatesId(val i: Int = -1)
+
 private data class GeneralId(val i: Int = -1)
+
 private data class PreId(val i: Int = -1)
 
 @Composable
@@ -466,6 +468,7 @@ private fun DrawScope.drawRoundedTriangle(
 }
 
 private fun Path.moveTo(offset: Offset) = moveTo(offset.x, offset.y)
+
 private fun Path.lineTo(offset: Offset) = lineTo(offset.x, offset.y)
 
 private fun Modifier.squareTerminalHeader(backgroundColor: Color, foregroundColor: Color) =

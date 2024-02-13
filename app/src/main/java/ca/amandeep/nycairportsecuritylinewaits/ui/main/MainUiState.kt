@@ -13,8 +13,9 @@ sealed interface MainUiState {
         val hasError: Boolean = false,
     ) : MainUiState
 
-    object Error : MainUiState
-    object Loading : MainUiState
+    data object Error : MainUiState
+
+    data object Loading : MainUiState
 }
 
 data class Airport(
