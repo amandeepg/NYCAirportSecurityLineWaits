@@ -472,7 +472,7 @@ private fun Path.moveTo(offset: Offset) = moveTo(offset.x, offset.y)
 private fun Path.lineTo(offset: Offset) = lineTo(offset.x, offset.y)
 
 private fun Modifier.squareTerminalHeader(backgroundColor: Color, foregroundColor: Color) =
-    background(
+    this.background(
         shape = RectangleShape,
         color = backgroundColor,
     ).border(
