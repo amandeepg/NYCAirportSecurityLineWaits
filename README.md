@@ -1,4 +1,4 @@
-<span><picture><img src="./play_store_512_rounded.webp" width="256"/></picture></span>
+<span><picture><img src="images/play_store_512_rounded.webp" width="256"/></picture></span>
 
 # NYC Airports Security Lines
 
