@@ -23,13 +23,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -109,7 +109,7 @@ fun MainScreen(
                 }
             }
             // Create a details screen for each airport
-            AirportCode.values().forEach { airportCode ->
+            AirportCode.entries.forEach { airportCode ->
                 val uiStateFlow = mainViewModel.getWaitTimes(airportCode)
 
                 slideAnimatedComposable(airportCode.shortCode) {
@@ -146,7 +146,10 @@ fun MainScreen(
                             .padding(innerPadding)
                             .pullRefresh(ptrState),
                     ) {
-                        MainScreenContent(uiState, forceRefresh)
+                        MainScreenContent(
+                            uiState = uiState,
+                            forceUpdate = forceRefresh
+                        )
                         PullRefreshIndicator(
                             refreshing = refreshing,
                             state = ptrState,
@@ -184,6 +187,7 @@ private fun setAndComputeLastGoodState(
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 private fun MainScreenContent(
+    modifier: Modifier = Modifier,
     uiState: MainUiState,
     forceUpdate: () -> Unit,
 ) {
@@ -192,6 +196,7 @@ private fun MainScreenContent(
 
     if (uiState == MainUiState.Error) {
         ErrorScreen(
+            modifier = modifier,
             connectivityState = connectivityState,
             forceUpdate = forceUpdate,
         )
@@ -201,8 +206,9 @@ private fun MainScreenContent(
             label = "main crossfade",
         ) { isLoading ->
             when (isLoading) {
-                true -> LoadingScreen()
+                true -> LoadingScreen(modifier = modifier)
                 false -> AirportScreen(
+                    modifier = modifier,
                     uiState = uiState as MainUiState.Valid,
                     connectivityState = connectivityState,
                 )
@@ -212,9 +218,11 @@ private fun MainScreenContent(
 }
 
 @Composable
-private fun LoadingScreen() {
+private fun LoadingScreen(
+    modifier: Modifier = Modifier,
+) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -224,8 +232,9 @@ private fun LoadingScreen() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TitleAndBackBar(
+fun TitleAndBackBar(
     titleAirportCode: AirportCode?,
     navController: NavHostController,
 ) = TopAppBar(
@@ -248,7 +257,7 @@ private fun TitleAndBackBar(
             if (titleAirportCode != null) {
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(
-                        imageVector = Icons.Filled.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.back),
                     )
                 }
@@ -305,7 +314,7 @@ fun Selection(
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(40.dp, BiasAlignment.Vertical(-0.4f)),
     ) {
-        AirportCode.values().toList().let {
+        AirportCode.entries.let {
             if (REMOVE_SWF) {
                 it - AirportCode.SWF
             } else {

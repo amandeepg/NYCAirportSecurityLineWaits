@@ -1,6 +1,6 @@
 <img src="./play_store_512_rounded.webp" width="256"/>
 
-# NYC Airports Security Lines [![Build with Gradle](https://github.com/amandeepg/NYCAirportSecurityLineWaits/actions/workflows/gradle.yml/badge.svg)](https://github.com/amandeepg/NYCAirportSecurityLineWaits/actions/workflows/gradle.yml)
+# NYC Airports Security Lines
 
 An Android app to see how long the security lines are at JFK, LGA & EWR airports.
 
@@ -9,6 +9,8 @@ Some features of the app:
 * See the general line vs the TSA PreCheck line.
 
 ## Development
+[![Build with Gradle](https://github.com/amandeepg/NYCAirportSecurityLineWaits/actions/workflows/gradle.yml/badge.svg)](https://github.com/amandeepg/NYCAirportSecurityLineWaits/actions/workflows/gradle.yml)
+
 Built with:
 * 100% Kotlin
 * UI in 100% [Jetpack Compose](https://developer.android.com/jetpack/compose)

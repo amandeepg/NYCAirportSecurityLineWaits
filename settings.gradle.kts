@@ -1,8 +1,14 @@
+import de.fayard.refreshVersions.core.StabilityLevel
+
 pluginManagement {
     repositories {
         gradlePluginPortal()
         google()
         mavenCentral()
+        maven("https://maven.pkg.github.com/IlyaGulya/paparazzi") {
+            name = "github"
+            credentials(PasswordCredentials::class.java)
+        }
     }
 }
 
@@ -13,7 +19,7 @@ plugins {
 
 refreshVersions {
     rejectVersionIf {
-        candidate.stabilityLevel.isLessStableThan(current.stabilityLevel)
+        candidate.stabilityLevel != StabilityLevel.Stable
     }
 }
 
@@ -22,7 +28,11 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven("https://maven.pkg.github.com/IlyaGulya/paparazzi") {
+            name = "github"
+            credentials(PasswordCredentials::class.java)
+        }
     }
 }
 rootProject.name = "NYC Airport Security Line Waits"
-include ':app'
+include(":app")

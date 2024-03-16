@@ -27,9 +27,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.Surface
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -361,7 +361,7 @@ private fun LoadedAirportCard(
                             if (gate.equals("All gates", ignoreCase = true)) {
                                 stringResource(R.string.all)
                             } else {
-                                gate
+                                gate.replace("-"," - ")
                             },
                             Modifier
                                 .layoutId(GatesId(i))
@@ -534,6 +534,7 @@ private fun Time(
     Crossfade(
         targetState = targetTime,
         Modifier.layoutId(id),
+        label = "time crossfade",
     ) { time ->
         Column(
             modifier = Modifier.alpha(if (time < 0) 0f else 1f),

@@ -4,8 +4,8 @@ plugins {
     id 'kotlin-parcelize'
     id 'org.jmailen.kotlinter'
     id 'com.google.devtools.ksp'
-    id 'de.mannodermaus.android-junit5'
     id 'app.cash.licensee'
+    id 'app.cash.paparazzi'
 }
 
 android {
@@ -64,6 +64,7 @@ dependencies {
     implementation AndroidX.activity.compose
     implementation AndroidX.constraintLayout.compose
     implementation AndroidX.compose.material3
+    implementation AndroidX.compose.material3.windowSizeClass
     implementation AndroidX.compose.material
     implementation AndroidX.compose.ui
     implementation AndroidX.core.ktx
@@ -73,6 +74,7 @@ dependencies {
     implementation AndroidX.lifecycle.viewModelKtx
     implementation AndroidX.navigation.compose
     implementation KotlinX.collections.immutable
+    implementation AndroidX.compose.material.icons.extended
 
     implementation Square.moshi.adapters
     implementation Square.moshi
@@ -92,4 +94,8 @@ licensee {
     allowUrl('https://developer.android.com/studio/terms.html') {
         because 'Android Software Development Kit License Agreement'
     }
+}
+
+tasks.withType(Test) {
+    android.sourceSets.main.res.srcDirs += 'src/test/res'
 }

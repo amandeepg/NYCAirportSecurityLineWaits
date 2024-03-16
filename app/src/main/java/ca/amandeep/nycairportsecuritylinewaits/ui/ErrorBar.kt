@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.Icon
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -60,7 +60,10 @@ fun ErrorBar(
             tint = MaterialTheme.colorScheme.onErrorContainer,
         )
         Spacer(Modifier.width(10.dp))
-        Crossfade(targetState = connectivityState) {
+        Crossfade(
+            targetState = connectivityState,
+            label = "error crossfade",
+        ) {
             val errorText = when (it) {
                 ConnectionState.Available -> stringResource(R.string.loading_error)
                 ConnectionState.Unavailable -> stringResource(R.string.no_internet_connection)
