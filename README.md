@@ -1,4 +1,6 @@
 <span><picture><img src="images/play_store_512_rounded.webp" width="256"/></picture></span>
+<a href='https://play.google.com/store/apps/details?id=ca.amandeep.nycairportsecuritylinewaits&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='images/play_store_qr_code.webp' height="256"/></a> &nbsp;
+
 
 # NYC Airports Security Lines
 
