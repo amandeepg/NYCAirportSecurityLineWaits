@@ -33,33 +33,31 @@ import java.util.Date
 
 @Suppress("RemoveExplicitTypeArguments")
 val DEVICE_DATA = listOfNotNull<List<Any>>(
-//        listOf("Pixel 4", DeviceConfig.PIXEL_4),
-//        listOf("Pixel 4a", DeviceConfig.PIXEL_4A),
-//        listOf("Pixel 4 XL", DeviceConfig.PIXEL_4_XL),
-//        listOf("Pixel 5", DeviceConfig.PIXEL_5),
-//        listOf("Pixel 6", DeviceConfig.PIXEL_6),
-//        listOf("Pixel 6 Pro", DeviceConfig.PIXEL_6_PRO),
-//        listOf("Pixel 7", PIXEL_7),
-//        listOf("Pixel 7a", PIXEL_7A),
-//        listOf("Pixel 7 Pro", PIXEL_7_PRO),
-//        listOf("Pixel 8", PIXEL_8),
-//        listOf("Pixel 8a", PIXEL_8A),
+//    listOf("Pixel 4", DeviceConfig.PIXEL_4),
+//    listOf("Pixel 4a", DeviceConfig.PIXEL_4A),
+//    listOf("Pixel 4 XL", DeviceConfig.PIXEL_4_XL),
+//    listOf("Pixel 5", DeviceConfig.PIXEL_5),
+//    listOf("Pixel 6", DeviceConfig.PIXEL_6),
+//    listOf("Pixel 6 Pro", DeviceConfig.PIXEL_6_PRO),
+//    listOf("Pixel 7", PIXEL_7),
+//    listOf("Pixel 7a", PIXEL_7A),
+//    listOf("Pixel 7 Pro", PIXEL_7_PRO),
+//    listOf("Pixel 8", PIXEL_8),
+//    listOf("Pixel 8a", PIXEL_8A),
     listOf("Pixel 8 Pro", PIXEL_8_PRO),
-//        listOf("Pixel Fold", PIXEL_FOLD),
-//        listOf("Pixel Fold Outer", PIXEL_FOLD_OUTER),
-//        listOf("Galaxy Z Fold5", GALAXY_Z_FOLD_5),
-//        listOf("Galaxy Z Fold5 Outer", GALAXY_Z_FOLD_5_OUTER),
-//        listOf("Galaxy Z Flip5", GALAXY_Z_FLIP_5),
-//        listOf("Galaxy Z Flip5 Outer", GALAXY_Z_FLIP_5_OUTER),
-//        listOf("Galaxy S23", GALAXY_S_23),
-//        listOf("Galaxy S23+", GALAXY_S_23_PLUS),
-//        listOf("Galaxy S23 Ultra", GALAXY_S_23_ULTRA),
-//        listOf("Galaxy S24", GALAXY_S_24),
-//        listOf("Galaxy S24+", GALAXY_S_24_PLUS),
-//        listOf("Galaxy S24 Ultra", GALAXY_S_24_ULTRA),
-).andLandscape() + listOf<List<Any>>(
-    //
-)
+//    listOf("Pixel Fold", PIXEL_FOLD),
+//    listOf("Pixel Fold Outer", PIXEL_FOLD_OUTER),
+//    listOf("Galaxy Z Fold5", GALAXY_Z_FOLD_5),
+//    listOf("Galaxy Z Fold5 Outer", GALAXY_Z_FOLD_5_OUTER),
+//    listOf("Galaxy Z Flip5", GALAXY_Z_FLIP_5),
+//    listOf("Galaxy Z Flip5 Outer", GALAXY_Z_FLIP_5_OUTER),
+//    listOf("Galaxy S23", GALAXY_S_23),
+//    listOf("Galaxy S23+", GALAXY_S_23_PLUS),
+//    listOf("Galaxy S23 Ultra", GALAXY_S_23_ULTRA),
+//    listOf("Galaxy S24", GALAXY_S_24),
+//    listOf("Galaxy S24+", GALAXY_S_24_PLUS),
+//    listOf("Galaxy S24 Ultra", GALAXY_S_24_ULTRA),
+).andLandscape() + listOf<List<Any>>()
 
 private val DATA: List<Any> = run {
     @Suppress("ktlint:standard:no-multi-spaces", "ktlint:standard:comment-wrapping")
@@ -93,9 +91,9 @@ class AirportScreenshotTest(
         @JvmStatic
         @Parameterized.Parameters(
             name = "darkMode={0}," +
-                    " device={1}," +
-                    " showNotifs={3}," +
-                    " airport={4}",
+                " device={1}," +
+                " showNotifs={3}," +
+                " airport={4}",
         )
         fun data() = DATA
     }

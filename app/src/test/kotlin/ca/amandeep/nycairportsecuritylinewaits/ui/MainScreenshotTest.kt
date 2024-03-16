@@ -50,8 +50,8 @@ class MainScreenshotTest(
         @JvmStatic
         @Parameterized.Parameters(
             name = "darkMode={0}," +
-                    " device={1}," +
-                    " showNotifs={3}",
+                " device={1}," +
+                " showNotifs={3}",
         )
         fun data() = DATA
     }

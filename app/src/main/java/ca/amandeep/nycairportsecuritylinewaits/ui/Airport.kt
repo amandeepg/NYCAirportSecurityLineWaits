@@ -361,7 +361,10 @@ private fun LoadedAirportCard(
                             if (gate.equals("All gates", ignoreCase = true)) {
                                 stringResource(R.string.all)
                             } else {
-                                gate.replace("-"," - ")
+                                gate
+                                    .replace(" - ", "-")
+                                    .replace(" - ", "-")
+                                    .replace("-", " - ")
                             },
                             Modifier
                                 .layoutId(GatesId(i))
@@ -472,14 +475,16 @@ private fun Path.moveTo(offset: Offset) = moveTo(offset.x, offset.y)
 private fun Path.lineTo(offset: Offset) = lineTo(offset.x, offset.y)
 
 private fun Modifier.squareTerminalHeader(backgroundColor: Color, foregroundColor: Color) =
-    this.background(
-        shape = RectangleShape,
-        color = backgroundColor,
-    ).border(
-        0.5.dp,
-        shape = RectangleShape,
-        color = foregroundColor,
-    )
+    this
+        .background(
+            shape = RectangleShape,
+            color = backgroundColor,
+        )
+        .border(
+            0.5.dp,
+            shape = RectangleShape,
+            color = foregroundColor,
+        )
 
 private fun Modifier.badgeLayout(offsetX: Int = 0, offsetY: Int = 0) =
     layout { measurable, constraints ->

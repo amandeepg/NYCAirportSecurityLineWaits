@@ -84,7 +84,12 @@ fun MainScreen(
     val navController = rememberNavController()
     Scaffold(
         modifier = modifier,
-        topBar = { TitleAndBackBar(titleAirportCode, navController) },
+        topBar = {
+            TitleAndBackBar(
+                titleAirportCode = titleAirportCode,
+                navController = navController,
+            )
+        },
     ) { innerPadding ->
         Box(
             Modifier.fillMaxSize(),
@@ -148,7 +153,7 @@ fun MainScreen(
                     ) {
                         MainScreenContent(
                             uiState = uiState,
-                            forceUpdate = forceRefresh
+                            forceUpdate = forceRefresh,
                         )
                         PullRefreshIndicator(
                             refreshing = refreshing,
@@ -187,8 +192,8 @@ private fun setAndComputeLastGoodState(
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 private fun MainScreenContent(
-    modifier: Modifier = Modifier,
     uiState: MainUiState,
+    modifier: Modifier = Modifier,
     forceUpdate: () -> Unit,
 ) {
     val connectivityState by LocalContext.current.observeConnectivity()
@@ -237,7 +242,9 @@ private fun LoadingScreen(
 fun TitleAndBackBar(
     titleAirportCode: AirportCode?,
     navController: NavHostController,
+    modifier: Modifier = Modifier,
 ) = TopAppBar(
+    modifier = modifier,
     // Title that shows the airport code and name when an airport is selected
     // and the title of the app when no airport is selected
     title = {
