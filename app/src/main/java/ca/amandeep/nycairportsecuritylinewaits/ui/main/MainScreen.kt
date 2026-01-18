@@ -355,7 +355,10 @@ fun Selection(
         ) {
             Text(
                 text = stringResource(R.string.airport_selection_title),
-                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = 1.sp,
+                ),
                 color = colorScheme.onSurfaceVariant,
             )
             Spacer(Modifier.height(6.dp))
@@ -391,8 +394,9 @@ private fun AirportSelectionCard(
             Text(
                 text = airport.shortName,
                 style = MaterialTheme.typography.displayMedium.copy(
-                    fontWeight = FontWeight.Black,
+                    fontWeight = FontWeight.SemiBold,
                     fontStyle = FontStyle.Italic,
+                    letterSpacing = 1.sp,
                 ),
                 color = colorScheme.onSurface,
             )
