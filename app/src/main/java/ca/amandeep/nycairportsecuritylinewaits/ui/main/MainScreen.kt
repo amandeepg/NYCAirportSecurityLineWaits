@@ -13,22 +13,28 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -44,7 +50,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
@@ -52,6 +57,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -67,6 +73,8 @@ import ca.amandeep.nycairportsecuritylinewaits.R
 import ca.amandeep.nycairportsecuritylinewaits.data.AirportCode
 import ca.amandeep.nycairportsecuritylinewaits.ui.AirportScreen
 import ca.amandeep.nycairportsecuritylinewaits.ui.ErrorScreen
+import ca.amandeep.nycairportsecuritylinewaits.ui.theme.NYCAirportSecurityLineWaitsTheme
+import ca.amandeep.nycairportsecuritylinewaits.ui.theme.surfaceColorAtElevation
 import ca.amandeep.nycairportsecuritylinewaits.util.ConnectionState
 import ca.amandeep.nycairportsecuritylinewaits.util.observeConnectivity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -102,64 +110,64 @@ fun MainScreen(
                 painter = painterResource(id = R.drawable.statue_of_liberty),
                 contentDescription = null,
             )
-        }
-        NavHost(navController = navController, startDestination = "selection") {
-            slideAnimatedComposable("selection") {
-                // Clear the title when we navigate to the main selection screen
-                LaunchedEffect(Unit) {
-                    titleAirportCode = null
-                }
-                Box(Modifier.padding(innerPadding)) {
-                    Selection(navigateTo = navController::navigate)
-                }
-            }
-            // Create a details screen for each airport
-            AirportCode.entries.forEach { airportCode ->
-                val uiStateFlow = mainViewModel.getWaitTimes(airportCode)
-
-                slideAnimatedComposable(airportCode.shortCode) {
-                    // Set the title to the airport when we navigate to the details screen
+            NavHost(navController = navController, startDestination = "selection") {
+                slideAnimatedComposable("selection") {
+                    // Clear the title when we navigate to the main selection screen
                     LaunchedEffect(Unit) {
-                        titleAirportCode = airportCode
+                        titleAirportCode = null
                     }
+                    Box(Modifier.padding(innerPadding)) {
+                        Selection(navigateTo = navController::navigate)
+                    }
+                }
+                // Create a details screen for each airport
+                AirportCode.entries.forEach { airportCode ->
+                    val uiStateFlow = mainViewModel.getWaitTimes(airportCode)
 
-                    var refreshing by remember { mutableStateOf(false) }
-                    LaunchedEffect(refreshing) {
-                        if (refreshing) {
-                            val elapsedMillis = measureTimeMillis {
-                                mainViewModel.refreshAirportFromNetwork(airportCode)
-                            }
-                            delay((500 - elapsedMillis).milliseconds)
-                            refreshing = false
+                    slideAnimatedComposable(airportCode.shortCode) {
+                        // Set the title to the airport when we navigate to the details screen
+                        LaunchedEffect(Unit) {
+                            titleAirportCode = airportCode
                         }
-                    }
-                    val forceRefresh = { refreshing = true }
 
-                    // If there's an error, show the last valid state, but with an error flag
-                    val uiState = setAndComputeLastGoodState(
-                        uiStateFlow = uiStateFlow,
-                        forceUpdate = forceRefresh,
-                    )
+                        var refreshing by remember { mutableStateOf(false) }
+                        LaunchedEffect(refreshing) {
+                            if (refreshing) {
+                                val elapsedMillis = measureTimeMillis {
+                                    mainViewModel.refreshAirportFromNetwork(airportCode)
+                                }
+                                delay((500 - elapsedMillis).milliseconds)
+                                refreshing = false
+                            }
+                        }
+                        val forceRefresh = { refreshing = true }
 
-                    val ptrState = rememberPullRefreshState(
-                        refreshing = refreshing,
-                        onRefresh = forceRefresh,
-                    )
-
-                    Box(
-                        Modifier
-                            .padding(innerPadding)
-                            .pullRefresh(ptrState),
-                    ) {
-                        MainScreenContent(
-                            uiState = uiState,
+                        // If there's an error, show the last valid state, but with an error flag
+                        val uiState = setAndComputeLastGoodState(
+                            uiStateFlow = uiStateFlow,
                             forceUpdate = forceRefresh,
                         )
-                        PullRefreshIndicator(
+
+                        val ptrState = rememberPullRefreshState(
                             refreshing = refreshing,
-                            state = ptrState,
-                            modifier = Modifier.align(Alignment.TopCenter),
+                            onRefresh = forceRefresh,
                         )
+
+                        Box(
+                            Modifier
+                                .padding(innerPadding)
+                                .pullRefresh(ptrState),
+                        ) {
+                            MainScreenContent(
+                                uiState = uiState,
+                                forceUpdate = forceRefresh,
+                            )
+                            PullRefreshIndicator(
+                                refreshing = refreshing,
+                                state = ptrState,
+                                modifier = Modifier.align(Alignment.TopCenter),
+                            )
+                        }
                     }
                 }
             }
@@ -315,34 +323,93 @@ fun Selection(
     navigateTo: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier
-            .fillMaxSize()
-            .padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(40.dp, BiasAlignment.Vertical(-0.4f)),
-    ) {
-        AirportCode.entries.let {
+    val airports = remember {
+        AirportCode.entries.let { entries ->
             if (REMOVE_SWF) {
-                it - AirportCode.SWF
+                entries - AirportCode.SWF
             } else {
-                it
+                entries
             }
-        }.forEach {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .clickable { navigateTo(it.shortCode) },
-            ) {
-                Text(
-                    it.shortName,
-                    fontWeight = FontWeight.Black,
-                    fontSize = 60.sp,
-                    fontStyle = FontStyle.Italic,
-                )
-                Text(
-                    it.fullName,
+        }
+    }
+    val colorScheme = MaterialTheme.colorScheme
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(colorScheme.surface),
+    ) {
+        Icon(
+            modifier = Modifier
+                .size(130.dp)
+                .align(Alignment.BottomCenter)
+                .alpha(0.15f),
+            painter = painterResource(id = R.drawable.statue_of_liberty),
+            contentDescription = null,
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 24.dp, vertical = 28.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(18.dp, Alignment.Top),
+        ) {
+            Text(
+                text = stringResource(R.string.airport_selection_title),
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+                color = colorScheme.onSurfaceVariant,
+            )
+            Spacer(Modifier.height(6.dp))
+            airports.forEach { airport ->
+                AirportSelectionCard(
+                    airport = airport,
+                    onClick = { navigateTo(airport.shortCode) },
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun AirportSelectionCard(
+    airport: AirportCode,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colorScheme = MaterialTheme.colorScheme
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        onClick = onClick,
+        colors = CardDefaults.cardColors(
+            containerColor = colorScheme.surfaceColorAtElevation(6.dp),
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 22.dp, vertical = 18.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Text(
+                text = airport.shortName,
+                style = MaterialTheme.typography.displayMedium.copy(
+                    fontWeight = FontWeight.Black,
+                    fontStyle = FontStyle.Italic,
+                ),
+                color = colorScheme.onSurface,
+            )
+            Text(
+                text = airport.fullName,
+                style = MaterialTheme.typography.bodyMedium,
+                color = colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Preview(uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+@Composable
+private fun SelectionPreview() {
+    NYCAirportSecurityLineWaitsTheme {
+        Selection(navigateTo = {})
     }
 }

@@ -86,6 +86,8 @@ dependencies {
 
     implementation AndroidX.compose.ui.tooling
     debugImplementation AndroidX.compose.ui.toolingPreview
+
+    testImplementation 'junit:junit:_'
 }
 
 licensee {
