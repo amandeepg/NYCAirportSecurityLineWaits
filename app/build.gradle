@@ -1,6 +1,8 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.compose'
     id 'kotlin-parcelize'
     id 'org.jmailen.kotlinter'
     id 'com.google.devtools.ksp'
@@ -8,55 +10,53 @@ plugins {
 }
 
 android {
-    compileSdk 34
+    compileSdk = 36
 
     defaultConfig {
-        applicationId "ca.amandeep.nycairportsecuritylinewaits"
-        minSdk 29
-        targetSdk 34
-        versionCode 1
-        versionName "1.0"
+        applicationId = "ca.amandeep.nycairportsecuritylinewaits"
+        minSdk = 29
+        targetSdk = 36
+        versionCode = 1
+        versionName = "1.0"
 
         vectorDrawables {
-            useSupportLibrary true
+            useSupportLibrary = true
         }
-        signingConfig signingConfigs.debug
+        signingConfig = signingConfigs.debug
     }
 
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled = true
+            shrinkResources = true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    kotlin {
-        jvmToolchain(11)
-    }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = '11'
-        freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
-        freeCompilerArgs += "-P"
-        freeCompilerArgs += "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" + project.buildDir.absolutePath + "/compose_compiler"
-        freeCompilerArgs += "-P"
-        freeCompilerArgs += "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" + project.buildDir.absolutePath + "/compose_compiler"
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
-        compose true
+        compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion compose_version
-    }
-    packagingOptions {
+    packaging {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
-    namespace 'ca.amandeep.nycairportsecuritylinewaits'
+    namespace = 'ca.amandeep.nycairportsecuritylinewaits'
+}
+
+kotlin {
+    jvmToolchain(11)
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_11
+        freeCompilerArgs.addAll([
+                "-Xopt-in=kotlin.RequiresOptIn",
+                "-P", "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${project.buildDir.absolutePath}/compose_compiler",
+                "-P", "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_compiler"
+        ])
+    }
 }
 
 dependencies {

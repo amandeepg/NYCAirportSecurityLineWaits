@@ -1,7 +1,4 @@
 buildscript {
-    ext {
-        compose_version = '_'
-    }
     dependencies {
         classpath "io.nlopez.compose.rules:ktlint:_"
         classpath CashApp.licenseeGradlePlugin
@@ -11,7 +8,7 @@ buildscript {
 plugins {
     id 'com.android.application' apply false
     id 'com.android.library' apply false
-    id 'org.jetbrains.kotlin.android' apply false
+    id 'org.jetbrains.kotlin.plugin.compose' apply false
     id 'org.jmailen.kotlinter' apply false
     id 'app.cash.licensee' apply false
 }
