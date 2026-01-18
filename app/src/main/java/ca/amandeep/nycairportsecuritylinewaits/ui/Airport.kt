@@ -59,6 +59,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -156,7 +157,7 @@ private fun LoadedAirportCard(
         fontWeight = FontWeight.SemiBold,
         letterSpacing = 1.sp,
     )
-    val titleStyle = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
+    val titleStyle = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold)
     val singleGateGroup =
         gates.firstOrNull()?.first?.startsWith("all", ignoreCase = true) == true
     val allPrecheckClosed = gates.all { it.second.preCheck?.queueOpen != true }
@@ -167,9 +168,7 @@ private fun LoadedAirportCard(
             .padding(horizontal = 18.dp, vertical = 14.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
+        Row {
             if (terminal != Terminal.SWF_MAIN && SHOW_TERMINAL_ICONS) {
                 Text(
                     terminal.identifier,
@@ -242,8 +241,18 @@ private fun LoadedAirportCard(
                     Terminal.SWF_MAIN -> stringResource(R.string.main_terminal)
                     else -> stringResource(R.string.terminal) + terminal.identifier
                 },
+                modifier = Modifier.alignByBaseline(),
                 style = titleStyle,
             )
+            terminalSubtitleRes(terminal)?.let { subtitleRes ->
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = stringResource(subtitleRes),
+                    modifier = Modifier.alignByBaseline(),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
 
         if (singleGateGroup) {
@@ -677,6 +686,23 @@ private fun waitTimeColor(
     } else {
         Color(211, 47, 47, 255)
     }
+}
+
+private fun terminalSubtitleRes(
+    terminal: Terminal,
+): Int? = when (terminal) {
+    Terminal.LGA_A -> R.string.terminal_subtitle_lga_a
+    Terminal.LGA_B -> R.string.terminal_subtitle_lga_b
+    Terminal.LGA_C -> R.string.terminal_subtitle_lga_c
+    Terminal.EWR_A -> R.string.terminal_subtitle_ewr_a
+    Terminal.EWR_B -> R.string.terminal_subtitle_ewr_b
+    Terminal.EWR_C -> R.string.terminal_subtitle_ewr_c
+    Terminal.JFK_1 -> R.string.terminal_subtitle_jfk_1
+    Terminal.JFK_4 -> R.string.terminal_subtitle_jfk_4
+    Terminal.JFK_5 -> R.string.terminal_subtitle_jfk_5
+    Terminal.JFK_7 -> R.string.terminal_subtitle_jfk_7
+    Terminal.JFK_8 -> R.string.terminal_subtitle_jfk_8
+    else -> null
 }
 
 @Preview

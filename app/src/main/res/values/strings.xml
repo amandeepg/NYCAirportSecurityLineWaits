@@ -5,6 +5,17 @@
     <string name="pre_short">PRE</string>
     <string name="main_terminal">Main Terminal</string>
     <string name="terminal">"Terminal "</string>
+    <string name="terminal_subtitle_jfk_1">International</string>
+    <string name="terminal_subtitle_jfk_4">Delta</string>
+    <string name="terminal_subtitle_jfk_5">JetBlue</string>
+    <string name="terminal_subtitle_jfk_7">International</string>
+    <string name="terminal_subtitle_jfk_8">American + Oneworld</string>
+    <string name="terminal_subtitle_ewr_a">Domestic + Canada</string>
+    <string name="terminal_subtitle_ewr_b">International</string>
+    <string name="terminal_subtitle_ewr_c">United</string>
+    <string name="terminal_subtitle_lga_a">Marine Air Terminal</string>
+    <string name="terminal_subtitle_lga_b">American + JetBlue</string>
+    <string name="terminal_subtitle_lga_c">Delta</string>
     <string name="gates">Gates</string>
     <string name="all">All</string>
     <string name="closed">Closed</string>
