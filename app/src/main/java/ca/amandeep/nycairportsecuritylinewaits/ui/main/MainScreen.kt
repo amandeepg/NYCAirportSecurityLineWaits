@@ -14,6 +14,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -90,6 +92,12 @@ fun MainScreen(
 ) {
     var titleAirportCode by remember { mutableStateOf<AirportCode?>(null) }
     val navController = rememberNavController()
+    val colorScheme = MaterialTheme.colorScheme
+    val backgroundColor = if (titleAirportCode == null) {
+        colorScheme.surface
+    } else {
+        if (isSystemInDarkTheme()) colorScheme.surface else colorScheme.surfaceVariant
+    }
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -100,13 +108,15 @@ fun MainScreen(
         },
     ) { innerPadding ->
         Box(
-            Modifier.fillMaxSize(),
-            contentAlignment = Alignment.BottomCenter,
+            Modifier
+                .fillMaxSize()
+                .background(backgroundColor),
         ) {
             Icon(
                 modifier = Modifier
                     .size(130.dp)
-                    .alpha(0.15f),
+                    .alpha(0.15f)
+                    .align(Alignment.BottomCenter),
                 painter = painterResource(id = R.drawable.statue_of_liberty),
                 contentDescription = null,
             )
@@ -335,17 +345,8 @@ fun Selection(
     val colorScheme = MaterialTheme.colorScheme
     Box(
         modifier = modifier
-            .fillMaxSize()
-            .background(colorScheme.surface),
+            .fillMaxSize(),
     ) {
-        Icon(
-            modifier = Modifier
-                .size(130.dp)
-                .align(Alignment.BottomCenter)
-                .alpha(0.15f),
-            painter = painterResource(id = R.drawable.statue_of_liberty),
-            contentDescription = null,
-        )
         Column(
             modifier = Modifier
                 .fillMaxSize()

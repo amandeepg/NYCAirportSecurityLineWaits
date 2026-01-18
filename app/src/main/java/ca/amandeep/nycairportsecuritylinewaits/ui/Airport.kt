@@ -8,27 +8,32 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,7 +55,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -70,9 +74,8 @@ import ca.amandeep.nycairportsecuritylinewaits.data.model.Terminal
 import ca.amandeep.nycairportsecuritylinewaits.ui.main.Airport
 import ca.amandeep.nycairportsecuritylinewaits.ui.main.MainUiState
 import ca.amandeep.nycairportsecuritylinewaits.ui.main.Queues
-import ca.amandeep.nycairportsecuritylinewaits.ui.theme.Card3
 import ca.amandeep.nycairportsecuritylinewaits.ui.theme.NYCAirportSecurityLineWaitsTheme
-import ca.amandeep.nycairportsecuritylinewaits.ui.theme.Typography
+import ca.amandeep.nycairportsecuritylinewaits.ui.theme.surfaceColorAtElevation
 import ca.amandeep.nycairportsecuritylinewaits.util.ConnectionState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -104,7 +107,15 @@ fun AirportScreen(
     connectivityState: ConnectionState,
     modifier: Modifier = Modifier,
 ) {
-    LazyColumn(modifier.fillMaxHeight()) {
+    LazyColumn(
+        modifier = modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(
+            horizontal = 16.dp,
+            vertical = 16.dp,
+        ),
+    ) {
         item {
             AnimatedVisibility(
                 visible = uiState.hasError,
@@ -120,10 +131,12 @@ fun AirportScreen(
             }
         }
         items(uiState.airport.terminals) { (terminal, gates) ->
-            Card3(
-                Modifier
-                    .padding(horizontal = 15.dp, vertical = 9.dp),
-                elevation = 5.dp,
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp),
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             ) {
                 LoadedAirportCard(gates, terminal)
             }
@@ -138,9 +151,23 @@ private fun LoadedAirportCard(
     gates: ImmutableList<Pair<String, Queues>>,
     terminal: Terminal,
 ) {
-    Column(Modifier.fillMaxWidth()) {
+    val labelStyle = MaterialTheme.typography.labelSmall.copy(
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        fontWeight = FontWeight.SemiBold,
+        letterSpacing = 1.sp,
+    )
+    val titleStyle = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
+    val singleGateGroup =
+        gates.firstOrNull()?.first?.startsWith("all", ignoreCase = true) == true
+    val allPrecheckClosed = gates.all { it.second.preCheck?.queueOpen != true }
+
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 18.dp, vertical = 14.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
         Row(
-            Modifier.padding(5.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (terminal != Terminal.SWF_MAIN && SHOW_TERMINAL_ICONS) {
@@ -211,25 +238,37 @@ private fun LoadedAirportCard(
                 Spacer(Modifier.width(10.dp))
             }
             Text(
-                when (terminal) {
+                text = when (terminal) {
                     Terminal.SWF_MAIN -> stringResource(R.string.main_terminal)
                     else -> stringResource(R.string.terminal) + terminal.identifier
                 },
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
+                style = titleStyle,
             )
         }
-        val gateHeaderStyle = Typography.labelMedium.copy(
-            color = Typography.labelMedium.color,
-        )
-        val singleGateGroup =
-            gates.firstOrNull()?.first?.startsWith("all", ignoreCase = true) == true
-        val allPrecheckClosed = gates.all { it.second.preCheck?.queueOpen != true }
 
-        @Suppress("SimplifyBooleanWithConstants", "KotlinConstantConditions")
-        if (false && singleGateGroup && allPrecheckClosed) {
-            Box(Modifier.padding(10.dp)) {
-                QueuesMins(0, gates.first().second, showEmptyPrecheckInGrid = false)
+        if (singleGateGroup) {
+            val queues = gates.firstOrNull()?.second
+            if (queues != null) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(24.dp),
+                ) {
+                    QueueSummary(
+                        label = stringResource(R.string.general_line).uppercase(),
+                        queue = queues.general,
+                        labelStyle = labelStyle,
+                        modifier = Modifier.weight(1f),
+                    )
+                    if (!allPrecheckClosed && queues.preCheck != null) {
+                        QueueSummary(
+                            label = stringResource(R.string.pre_short),
+                            queue = queues.preCheck,
+                            labelStyle = labelStyle,
+                            modifier = Modifier.weight(1f),
+                            showCheck = true,
+                        )
+                    }
+                }
             }
         } else {
             val constraintSet = ConstraintSet {
@@ -237,140 +276,102 @@ private fun LoadedAirportCard(
                 val preLabel = createRefFor(PreId())
                 val margin = COLUMNS_MARGIN.dp
 
-                if (singleGateGroup) {
-                    val generalTimeRef = createRefFor(GeneralId(0))
-                    val preTimeRef = createRefFor(PreId(0))
+                val gatesLabel = createRefFor(GatesId())
 
-                    val endGeneral = createEndBarrier(generalTimeRef, generalLabel, margin = margin)
-                    val endPre = createEndBarrier(preTimeRef, preLabel, margin = margin)
+                val gateRefs =
+                    gates.indices.map { createRefFor(GatesId(it)) }
+                val generalRefs =
+                    gates.indices.map { createRefFor(GeneralId(it)) }
+                val preRefs =
+                    gates.indices.map { createRefFor(PreId(it)) }
 
-                    constrain(generalTimeRef) {
+                val endGate =
+                    createEndBarrier(gateRefs + gatesLabel, margin)
+                val endGeneral =
+                    createEndBarrier(generalRefs + generalLabel, margin)
+                val endPre =
+                    createEndBarrier(preRefs + preLabel, margin)
+
+                gates.indices.forEach { i ->
+                    val bottomBarrier =
+                        if (i > 0) {
+                            createBottomBarrier(
+                                gateRefs[i - 1],
+                                generalRefs[i - 1],
+                                preRefs[i - 1],
+                                margin = (-MIN_OFFSET / 2).dp,
+                            )
+                        } else {
+                            null
+                        }
+
+                    constrain(gateRefs[i]) {
+                        top.linkTo(bottomBarrier ?: gatesLabel.bottom)
                         start.linkTo(parent.start)
+                        bottom.linkTo(generalRefs[i].bottom)
+                        bottom.linkTo(preRefs[i].bottom)
+                    }
+                    constrain(generalRefs[i]) {
+                        top.linkTo(bottomBarrier ?: gatesLabel.bottom)
+                        start.linkTo(endGate)
                         end.linkTo(endGeneral)
-                        top.linkTo(generalLabel.bottom)
-                        bottom.linkTo(preTimeRef.bottom)
+                        bottom.linkTo(gateRefs[i].bottom)
+                        bottom.linkTo(preRefs[i].bottom)
                     }
-                    constrain(preTimeRef) {
+                    constrain(preRefs[i]) {
+                        top.linkTo(bottomBarrier ?: gatesLabel.bottom)
                         start.linkTo(endGeneral)
                         end.linkTo(endPre)
-                        top.linkTo(generalLabel.bottom)
-                        bottom.linkTo(generalTimeRef.bottom)
+                        bottom.linkTo(gateRefs[i].bottom)
+                        bottom.linkTo(generalRefs[i].bottom)
                     }
+                }
 
-                    constrain(generalLabel) {
-                        start.linkTo(parent.start)
-                        top.linkTo(preLabel.top)
-                        bottom.linkTo(preLabel.bottom)
-                    }
-                    constrain(preLabel) {
-                        start.linkTo(endGeneral)
-                        end.linkTo(endPre)
-                        top.linkTo(parent.top)
-                        bottom.linkTo(generalLabel.bottom)
-                    }
-                } else {
-                    val gatesLabel = createRefFor(GatesId())
-
-                    val gateRefs =
-                        gates.indices.map { createRefFor(GatesId(it)) }
-                    val generalRefs =
-                        gates.indices.map { createRefFor(GeneralId(it)) }
-                    val preRefs =
-                        gates.indices.map { createRefFor(PreId(it)) }
-
-                    val endGate =
-                        createEndBarrier(gateRefs + gatesLabel, margin)
-                    val endGeneral =
-                        createEndBarrier(generalRefs + generalLabel, margin)
-                    val endPre =
-                        createEndBarrier(preRefs + preLabel, margin)
-
-                    gates.indices.forEach { i ->
-                        val bottomBarrier =
-                            if (i > 0) {
-                                createBottomBarrier(
-                                    gateRefs[i - 1],
-                                    generalRefs[i - 1],
-                                    preRefs[i - 1],
-                                    margin = (-MIN_OFFSET / 2).dp,
-                                )
-                            } else {
-                                null
-                            }
-
-                        constrain(gateRefs[i]) {
-                            top.linkTo(bottomBarrier ?: gatesLabel.bottom)
-                            start.linkTo(parent.start)
-                            bottom.linkTo(generalRefs[i].bottom)
-                            bottom.linkTo(preRefs[i].bottom)
-                        }
-                        constrain(generalRefs[i]) {
-                            top.linkTo(bottomBarrier ?: gatesLabel.bottom)
-                            start.linkTo(endGate)
-                            end.linkTo(endGeneral)
-                            bottom.linkTo(gateRefs[i].bottom)
-                            bottom.linkTo(preRefs[i].bottom)
-                        }
-                        constrain(preRefs[i]) {
-                            top.linkTo(bottomBarrier ?: gatesLabel.bottom)
-                            start.linkTo(endGeneral)
-                            end.linkTo(endPre)
-                            bottom.linkTo(gateRefs[i].bottom)
-                            bottom.linkTo(generalRefs[i].bottom)
-                        }
-                    }
-
-                    constrain(gatesLabel) {
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                    }
-                    constrain(generalLabel) {
-                        top.linkTo(gatesLabel.top)
-                        start.linkTo(endGate ?: parent.start)
-                        end.linkTo(endGeneral)
-                    }
-                    constrain(preLabel) {
-                        top.linkTo(gatesLabel.top)
-                        bottom.linkTo(gatesLabel.bottom)
-                        start.linkTo(endGeneral)
-                        end.linkTo(endPre)
-                    }
+                constrain(gatesLabel) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                }
+                constrain(generalLabel) {
+                    top.linkTo(gatesLabel.top)
+                    start.linkTo(endGate ?: parent.start)
+                    end.linkTo(endGeneral)
+                }
+                constrain(preLabel) {
+                    top.linkTo(gatesLabel.top)
+                    bottom.linkTo(gatesLabel.bottom)
+                    start.linkTo(endGeneral)
+                    end.linkTo(endPre)
                 }
             }
             ConstraintLayout(
                 constraintSet = constraintSet,
-                Modifier.padding(10.dp),
+                Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
             ) {
-                if (!singleGateGroup) {
-                    Text(
-                        stringResource(R.string.gates),
-                        Modifier
-                            .layoutId(GatesId())
-                            .alpha(0.7f),
-                        style = gateHeaderStyle,
-                    )
-                }
-                GeneralLabel(gateHeaderStyle)
+                Text(
+                    stringResource(R.string.gates).uppercase(),
+                    Modifier.layoutId(GatesId()),
+                    style = labelStyle,
+                )
+                GeneralLabel(labelStyle)
                 if (!allPrecheckClosed) {
-                    PrecheckLabel()
+                    PrecheckLabel(labelStyle)
                 }
 
                 gates.forEachIndexed { i, (gate, queues) ->
-                    if (!singleGateGroup) {
-                        Text(
-                            if (gate.equals("All gates", ignoreCase = true)) {
-                                stringResource(R.string.all)
-                            } else {
-                                gate
-                                    .replace(" - ", "-")
-                                    .replace(" - ", "-")
-                                    .replace("-", " - ")
-                            },
-                            Modifier
-                                .layoutId(GatesId(i))
-                                .alpha(if (queues.bothClosed) CLOSED_ALPHA else 1f),
-                        )
-                    }
+                    Text(
+                        if (gate.equals("All gates", ignoreCase = true)) {
+                            stringResource(R.string.all)
+                        } else {
+                            gate
+                                .replace(" - ", "-")
+                                .replace(" - ", "-")
+                                .replace("-", " - ")
+                        },
+                        Modifier
+                            .layoutId(GatesId(i))
+                            .alpha(if (queues.bothClosed) CLOSED_ALPHA else 1f),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
                     QueuesMins(i, queues, showEmptyPrecheckInGrid = true)
                 }
             }
@@ -379,29 +380,93 @@ private fun LoadedAirportCard(
 }
 
 @Composable
-private fun PrecheckLabel() {
-    Icon(
-        modifier = Modifier
-            .layoutId(PreId())
-            .height(16.dp)
-            .widthIn(min = 40.dp)
-            .alpha(0.7f),
-        painter = painterResource(id = R.drawable.ic_pre),
-        contentDescription = stringResource(R.string.precheck),
-    )
+private fun PrecheckLabel(
+    labelStyle: TextStyle,
+) {
+    Row(
+        modifier = Modifier.layoutId(PreId()),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = stringResource(R.string.pre_short),
+            style = labelStyle,
+        )
+        Spacer(Modifier.width(4.dp))
+        PrecheckBadge(
+            color = labelStyle.color,
+            contentDescription = stringResource(R.string.precheck),
+        )
+    }
 }
 
 @Composable
 private fun GeneralLabel(
-    gateHeaderStyle: TextStyle,
+    labelStyle: TextStyle,
 ) {
     Text(
-        stringResource(R.string.general_line),
-        Modifier
-            .layoutId(GeneralId())
-            .alpha(0.7f),
-        style = gateHeaderStyle,
+        stringResource(R.string.general_line).uppercase(),
+        Modifier.layoutId(GeneralId()),
+        style = labelStyle,
     )
+}
+
+@Composable
+private fun QueueSummary(
+    label: String,
+    queue: Queue,
+    labelStyle: TextStyle,
+    modifier: Modifier = Modifier,
+    showCheck: Boolean = false,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(text = label, style = labelStyle)
+            if (showCheck) {
+                Spacer(Modifier.width(4.dp))
+                PrecheckBadge(
+                    color = labelStyle.color,
+                    contentDescription = null,
+                )
+            }
+        }
+        if (queue.queueOpen) {
+            Time(
+                targetTime = queue.timeInMinutes,
+            )
+        } else {
+            ClosedLabel(
+                alpha = 1f,
+                modifier = Modifier,
+            )
+        }
+    }
+}
+
+@Composable
+private fun PrecheckBadge(
+    color: Color,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+) {
+    val fillColor = color.copy(alpha = 0.18f)
+    Box(
+        modifier = modifier
+            .size(14.dp)
+            .background(fillColor, CircleShape),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.Check,
+            contentDescription = contentDescription,
+            modifier = Modifier.size(9.dp),
+            tint = color,
+        )
+    }
 }
 
 private fun Modifier.roundedTerminalHeader(
@@ -511,80 +576,106 @@ private fun QueuesMins(
     showEmptyPrecheckInGrid: Boolean,
 ) {
     if (queues.general.queueOpen) {
-        Time(GeneralId(i), queues.general.timeInMinutes)
+        Time(
+            targetTime = queues.general.timeInMinutes,
+            modifier = Modifier.layoutId(GeneralId(i)),
+        )
     } else {
-        Text(
-            stringResource(R.string.closed),
-            Modifier
-                .layoutId(GeneralId(i))
-                .alpha(if (queues.bothClosed) CLOSED_ALPHA else 1f),
-            fontSize = 18.sp,
-            maxLines = 1,
-            fontStyle = FontStyle.Italic,
-            fontWeight = FontWeight.SemiBold,
+        ClosedLabel(
+            modifier = Modifier.layoutId(GeneralId(i)),
+            alpha = if (queues.bothClosed) CLOSED_ALPHA else 1f,
         )
     }
     if (queues.preCheck?.queueOpen == true) {
-        Time(PreId(i), queues.preCheck.timeInMinutes)
+        Time(
+            targetTime = queues.preCheck.timeInMinutes,
+            modifier = Modifier.layoutId(PreId(i)),
+        )
     } else if (showEmptyPrecheckInGrid) {
-        Time(PreId(i), -1)
+        Time(
+            targetTime = -1,
+            modifier = Modifier.layoutId(PreId(i)),
+        )
     }
 }
 
 @Composable
+private fun ClosedLabel(
+    modifier: Modifier = Modifier,
+    alpha: Float = 1f,
+) {
+    Text(
+        text = stringResource(R.string.closed),
+        modifier = modifier.alpha(alpha),
+        style = MaterialTheme.typography.bodySmall.copy(
+            fontStyle = FontStyle.Italic,
+            fontWeight = FontWeight.SemiBold,
+        ),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        maxLines = 1,
+    )
+}
+
+@Composable
 private fun Time(
-    id: Any,
     targetTime: Int,
+    modifier: Modifier = Modifier,
 ) {
     Crossfade(
         targetState = targetTime,
-        Modifier.layoutId(id),
+        modifier,
         label = "time crossfade",
     ) { time ->
-        Column(
+        Row(
             modifier = Modifier.alpha(if (time < 0) 0f else 1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalAlignment = Alignment.Bottom,
         ) {
-            val color = when {
-                time < 10 -> if (isSystemInDarkTheme()) {
-                    Color(129, 199, 132, 255)
-                } else {
-                    Color(56, 142, 60, 255)
-                }
-
-                time < 25 -> if (isSystemInDarkTheme()) {
-                    Color(255, 241, 118, 255)
-                } else {
-                    Color(251, 192, 45, 255)
-                }
-
-                else -> if (isSystemInDarkTheme()) {
-                    Color(229, 115, 115, 255)
-                } else {
-                    Color(211, 47, 47, 255)
-                }
-            }
+            val color = waitTimeColor(time)
             Text(
                 time.toString(),
-                fontSize = 30.sp,
-                color = color,
+                modifier = Modifier.alignByBaseline(),
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    color = color,
+                ),
                 maxLines = 1,
-                fontWeight = FontWeight.Black,
             )
+            Spacer(Modifier.width(6.dp))
             Text(
                 when (time) {
                     1 -> stringResource(R.string.min)
                     else -> stringResource(R.string.mins)
                 },
                 color = color,
-                modifier = Modifier
-                    .offset(y = (-MIN_OFFSET).dp)
-                    .animateContentSize(),
-                style = Typography.labelSmall.copy(
-                    fontWeight = FontWeight.Light,
+                modifier = Modifier.alignByBaseline(),
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontWeight = FontWeight.Medium,
                 ),
             )
         }
+    }
+}
+
+@Composable
+private fun waitTimeColor(
+    time: Int,
+): Color = when {
+    time < 10 -> if (isSystemInDarkTheme()) {
+        Color(129, 199, 132, 255)
+    } else {
+        Color(56, 142, 60, 255)
+    }
+
+    time < 25 -> if (isSystemInDarkTheme()) {
+        Color(255, 241, 118, 255)
+    } else {
+        Color(251, 192, 45, 255)
+    }
+
+    else -> if (isSystemInDarkTheme()) {
+        Color(229, 115, 115, 255)
+    } else {
+        Color(211, 47, 47, 255)
     }
 }
 

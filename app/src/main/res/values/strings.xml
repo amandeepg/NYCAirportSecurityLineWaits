@@ -2,6 +2,7 @@
     <string name="app_name">NYC Airports Security Lines</string>
     <string name="general_line">General Line</string>
     <string name="precheck">PreCheck</string>
+    <string name="pre_short">PRE</string>
     <string name="main_terminal">Main Terminal</string>
     <string name="terminal">"Terminal "</string>
     <string name="gates">Gates</string>
