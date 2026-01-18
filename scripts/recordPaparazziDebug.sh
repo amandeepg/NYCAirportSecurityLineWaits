@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Paparazzi disabled; script retained for reference.
+: <<'PAPARAZZI_DISABLED'
 
 # Constants
 SNAPSHOT_DIR="app/src/test/snapshots/images"
@@ -96,3 +98,4 @@ for file in images/framescr*.webp; do
     convert "$file" "${file%.webp}.png"
 done
 echo "Process completed successfully."
+PAPARAZZI_DISABLED

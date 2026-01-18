@@ -5,7 +5,6 @@ plugins {
     id 'org.jmailen.kotlinter'
     id 'com.google.devtools.ksp'
     id 'app.cash.licensee'
-    id 'app.cash.paparazzi'
 }
 
 android {

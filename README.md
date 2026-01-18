@@ -18,7 +18,6 @@ Built with:
 * UI in 100% [Jetpack Compose](https://developer.android.com/jetpack/compose)
 * [Kotlin Flow](https://kotlinlang.org/docs/flow.html)
 * [Android ViewModels](https://developer.android.com/topic/libraries/architecture/viewmodel)
-* Screenshot generation with [Paparazzi](https://github.com/cashapp/paparazzi)
 * Framing screenshots with [framer](https://github.com/amandeepg/framer)
 
 ## Screenshots

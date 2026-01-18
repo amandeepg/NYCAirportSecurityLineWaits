@@ -1,3 +1,6 @@
+/*
+Paparazzi disabled; file retained for reference.
+
 @file:Suppress("ktlint:standard:filename")
 
 package ca.amandeep.nycairportsecuritylinewaits.ui
@@ -240,3 +243,4 @@ fun List<Any>.toLandscape(): List<Any>? = run {
 fun List<List<Any>>.andLandscape(): List<List<Any>> = run {
     this + mapNotNull { it.toLandscape() }
 }
+*/

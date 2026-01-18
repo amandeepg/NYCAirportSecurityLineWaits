@@ -5,10 +5,6 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
-        maven("https://maven.pkg.github.com/IlyaGulya/paparazzi") {
-            name = "github"
-            credentials(PasswordCredentials::class.java)
-        }
     }
 }
 
@@ -28,10 +24,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven("https://maven.pkg.github.com/IlyaGulya/paparazzi") {
-            name = "github"
-            credentials(PasswordCredentials::class.java)
-        }
     }
 }
 rootProject.name = "NYC Airport Security Line Waits"

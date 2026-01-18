@@ -1,3 +1,6 @@
+/*
+Paparazzi disabled; file retained for reference.
+
 package ca.amandeep.nycairportsecuritylinewaits.ui
 
 import androidx.compose.foundation.background
@@ -263,3 +266,4 @@ class AirportScreenshotTest(
         status = "Open",
     )
 }
+*/
