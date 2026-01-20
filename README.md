@@ -21,7 +21,7 @@ Built with:
 * Framing screenshots with [framer](https://github.com/amandeepg/framer)
 
 ## Screenshots
-<a href="https://raw.githubusercontent.com/amandeepg/NYCAirportSecurityLineWaits/master/images/framescr1.webp"><img src="images/framescr1.webp" width="45%"/></a> 
-<a href="https://raw.githubusercontent.com/amandeepg/NYCAirportSecurityLineWaits/master/images/framescr2.webp"><img src="images/framescr2.webp" width="45%"/></a> 
-<a href="https://raw.githubusercontent.com/amandeepg/NYCAirportSecurityLineWaits/master/images/framescr3.webp"><img src="images/framescr3.webp" width="45%"/></a> 
-<a href="https://raw.githubusercontent.com/amandeepg/NYCAirportSecurityLineWaits/master/images/framescr4.webp"><img src="images/framescr4.webp" width="45%"/></a> 
+<a href="https://raw.githubusercontent.com/amandeepg/NYCAirportSecurityLineWaits/master/images/frames/output/airport_selection.webp"><img src="images/frames/output/airport_selection.webp" width="45%"/></a> 
+<a href="https://raw.githubusercontent.com/amandeepg/NYCAirportSecurityLineWaits/master/images/frames/output/night_and_day.webp"><img src="images/frames/output/night_and_day.webp" width="45%"/></a> 
+<a href="https://raw.githubusercontent.com/amandeepg/NYCAirportSecurityLineWaits/master/images/frames/output/jfk_prefetch.webp"><img src="images/frames/output/jfk_prefetch.webp" width="45%"/></a> 
+<a href="https://raw.githubusercontent.com/amandeepg/NYCAirportSecurityLineWaits/master/images/frames/output/lga.webp"><img src="images/frames/output/lga.webp" width="45%"/></a> 
