@@ -24,7 +24,7 @@ jobs:
     output: output/jfk_prefetch.png
     screenshot: AirportJfkScreenshot_Pixel_9_Night_.*_0\.png
   - name: lga
-    text: At <color="#FFA8D3">every</color> NYC area Airport.
+    text: At <color="#FFA8D3">every</color> NYC area airport.
     device_frame: frame.webp
     output: output/lga.png
     screenshot: AirportLgaScreenshot_Pixel_9_Day_.*_0\.png
