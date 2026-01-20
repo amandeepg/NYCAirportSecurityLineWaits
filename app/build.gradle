@@ -9,6 +9,8 @@ plugins {
     id 'app.cash.licensee'
 }
 
+apply plugin: "com.android.compose.screenshot"
+
 android {
     compileSdk = 36
 
@@ -39,6 +41,7 @@ android {
     buildFeatures {
         compose = true
     }
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
     packaging {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
@@ -86,6 +89,8 @@ dependencies {
 
     implementation AndroidX.compose.ui.tooling
     debugImplementation AndroidX.compose.ui.toolingPreview
+    screenshotTestImplementation AndroidX.compose.ui.tooling
+    screenshotTestImplementation "com.android.tools.screenshot:screenshot-validation-api:_"
 
     testImplementation 'junit:junit:_'
 }
@@ -99,4 +104,10 @@ licensee {
 
 tasks.withType(Test) {
     android.sourceSets.main.res.srcDirs += 'src/test/res'
+    if (name.contains("ScreenshotTest")) {
+        scanForTestClasses = true
+        doFirst {
+            scanForTestClasses = true
+        }
+    }
 }

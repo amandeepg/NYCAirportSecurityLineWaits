@@ -15,7 +15,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -77,6 +76,7 @@ import ca.amandeep.nycairportsecuritylinewaits.R
 import ca.amandeep.nycairportsecuritylinewaits.data.AirportCode
 import ca.amandeep.nycairportsecuritylinewaits.ui.AirportScreen
 import ca.amandeep.nycairportsecuritylinewaits.ui.ErrorScreen
+import ca.amandeep.nycairportsecuritylinewaits.ui.theme.LocalIsDarkTheme
 import ca.amandeep.nycairportsecuritylinewaits.ui.theme.NYCAirportSecurityLineWaitsTheme
 import ca.amandeep.nycairportsecuritylinewaits.ui.theme.surfaceColorAtElevation
 import ca.amandeep.nycairportsecuritylinewaits.util.ConnectionState
@@ -98,7 +98,7 @@ fun MainScreen(
     val backgroundColor = if (titleAirportCode == null) {
         colorScheme.surface
     } else {
-        if (isSystemInDarkTheme()) colorScheme.surface else colorScheme.surfaceVariant
+        if (LocalIsDarkTheme.current) colorScheme.surface else colorScheme.surfaceVariant
     }
     Scaffold(
         modifier = modifier,

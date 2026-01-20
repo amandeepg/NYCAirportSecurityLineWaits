@@ -1,6 +1,7 @@
 package ca.amandeep.nycairportsecuritylinewaits.ui.theme
 
 import android.app.Activity
+import android.content.res.Configuration
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Card
@@ -14,10 +15,12 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.TextStyle
@@ -29,11 +32,13 @@ private val DarkColorScheme = darkColorScheme()
 
 private val LightColorScheme = lightColorScheme()
 
+val LocalIsDarkTheme = staticCompositionLocalOf { false }
+
 @Composable
 fun NYCAirportSecurityLineWaitsTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val colorScheme = when {
@@ -53,28 +58,30 @@ fun NYCAirportSecurityLineWaitsTheme(
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-    ) {
-        androidx.compose.material.MaterialTheme(
-            colors = androidx.compose.material.MaterialTheme.colors.copy(
-                primary = colorScheme.primary,
-                primaryVariant = colorScheme.primary,
-                secondary = colorScheme.secondary,
-                secondaryVariant = colorScheme.secondary,
-                background = colorScheme.background,
-                surface = colorScheme.surface,
-                error = colorScheme.error,
-                onPrimary = colorScheme.onPrimary,
-                onSecondary = colorScheme.onSecondary,
-                onBackground = colorScheme.onBackground,
-                onSurface = colorScheme.onSurface,
-                onError = colorScheme.onError,
-                isLight = !darkTheme,
-            ),
+    CompositionLocalProvider(LocalIsDarkTheme provides darkTheme) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
         ) {
-            content()
+            androidx.compose.material.MaterialTheme(
+                colors = androidx.compose.material.MaterialTheme.colors.copy(
+                    primary = colorScheme.primary,
+                    primaryVariant = colorScheme.primary,
+                    secondary = colorScheme.secondary,
+                    secondaryVariant = colorScheme.secondary,
+                    background = colorScheme.background,
+                    surface = colorScheme.surface,
+                    error = colorScheme.error,
+                    onPrimary = colorScheme.onPrimary,
+                    onSecondary = colorScheme.onSecondary,
+                    onBackground = colorScheme.onBackground,
+                    onSurface = colorScheme.onSurface,
+                    onError = colorScheme.onError,
+                    isLight = !darkTheme,
+                ),
+            ) {
+                content()
+            }
         }
     }
 }
@@ -89,7 +96,7 @@ fun Card3(
         modifier = modifier,
         elevation = elevation,
         backgroundColor =
-            if (isSystemInDarkTheme()) {
+            if (LocalIsDarkTheme.current) {
                 MaterialTheme.colorScheme.surface
             } else {
                 lerp(

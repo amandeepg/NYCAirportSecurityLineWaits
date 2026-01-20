@@ -12,7 +12,6 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -75,6 +74,7 @@ import ca.amandeep.nycairportsecuritylinewaits.data.model.Terminal
 import ca.amandeep.nycairportsecuritylinewaits.ui.main.Airport
 import ca.amandeep.nycairportsecuritylinewaits.ui.main.MainUiState
 import ca.amandeep.nycairportsecuritylinewaits.ui.main.Queues
+import ca.amandeep.nycairportsecuritylinewaits.ui.theme.LocalIsDarkTheme
 import ca.amandeep.nycairportsecuritylinewaits.ui.theme.NYCAirportSecurityLineWaitsTheme
 import ca.amandeep.nycairportsecuritylinewaits.ui.theme.surfaceColorAtElevation
 import ca.amandeep.nycairportsecuritylinewaits.util.ConnectionState
@@ -174,7 +174,7 @@ private fun LoadedAirportCard(
                     terminal.identifier,
                     modifier = Modifier
                         .let { m ->
-                            val whiteBorder = if (isSystemInDarkTheme()) {
+                            val whiteBorder = if (LocalIsDarkTheme.current) {
                                 LocalContentColor.current
                             } else {
                                 OFFWHITE_BORDER
@@ -230,7 +230,7 @@ private fun LoadedAirportCard(
                         Terminal.LGA_D,
                         -> Color.Black
 
-                        else -> if (isSystemInDarkTheme()) LocalContentColor.current else Color.White
+                        else -> if (LocalIsDarkTheme.current) LocalContentColor.current else Color.White
                     },
                     fontWeight = if (terminal == Terminal.EWR_B) FontWeight.SemiBold else FontWeight.Black,
                 )
@@ -669,19 +669,19 @@ private fun Time(
 private fun waitTimeColor(
     time: Int,
 ): Color = when {
-    time < 10 -> if (isSystemInDarkTheme()) {
+    time < 10 -> if (LocalIsDarkTheme.current) {
         Color(129, 199, 132, 255)
     } else {
         Color(56, 142, 60, 255)
     }
 
-    time < 25 -> if (isSystemInDarkTheme()) {
+    time < 25 -> if (LocalIsDarkTheme.current) {
         Color(255, 241, 118, 255)
     } else {
-        Color(251, 192, 45, 255)
+        Color(229, 177, 47, 255)
     }
 
-    else -> if (isSystemInDarkTheme()) {
+    else -> if (LocalIsDarkTheme.current) {
         Color(229, 115, 115, 255)
     } else {
         Color(211, 47, 47, 255)

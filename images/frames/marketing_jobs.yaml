@@ -1,0 +1,35 @@
+defaults:
+  default_color: '#ffffffe6'
+  font: Google Sans
+  color: center
+  tolerance: 80
+  zero_alpha_threshold: 50
+  device_width_ratio: 0.8
+  search_root: ../..
+  screenshot_directory: ../../app/src/screenshotTestDebug/reference/ca/amandeep/nycairportsecuritylinewaits/ui/main/MarketingScreenshotsKt
+jobs:
+  - name: airport_selection
+    text: Instant <color="#FFA8D3">wait times</color> for all NYC airports.
+    device_frame: frame.webp
+    output: output/airport_selection.png
+    screenshot: AirportSelectionSingleThemeScreenshot_Pixel_9_Day_.*_0\.png
+  - name: night_and_day
+    text: Material design. <color="#FFA8D3">Dark</color> & <color="#FFD166">light</color> mode.
+    device_frame: frame.webp
+    output: output/night_and_day.png
+    screenshot: AirportSelectionScreenshot_Pixel_9_Night_.*_0\.png
+  - name: jfk
+    text: General &                    <color="#FFA8D3">PreCheck</color> lines.
+    device_frame: frame.webp
+    output: output/jfk_prefetch.png
+    screenshot: AirportJfkScreenshot_Pixel_9_Night_.*_0\.png
+  - name: lga
+    text: At <color="#FFA8D3">every</color> NYC area Airport.
+    device_frame: frame.webp
+    output: output/lga.png
+    screenshot: AirportLgaScreenshot_Pixel_9_Day_.*_0\.png
+  - name: ewr
+    text: Yes, even <color="#FFA8D3">that</color> one.
+    device_frame: frame.webp
+    output: output/ewr.png
+    screenshot: AirportEwrScreenshot_Pixel_9_Night_.*_0\.png

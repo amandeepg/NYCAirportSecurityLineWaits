@@ -1,6 +1,7 @@
 buildscript {
     dependencies {
         classpath "io.nlopez.compose.rules:ktlint:_"
+        classpath "com.android.compose.screenshot:com.android.compose.screenshot.gradle.plugin:0.0.1-alpha13"
         classpath CashApp.licenseeGradlePlugin
     }
 }
