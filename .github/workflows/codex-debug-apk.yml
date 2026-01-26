@@ -1,0 +1,30 @@
+name: Codex Debug APK
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+jobs:
+  build-debug-apk:
+    if: startsWith(github.head_ref, 'codex/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version-file: ".java-version"
+          distribution: temurin
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+      - name: Assemble debug APK
+        run: ./gradlew assembleDebug --quiet --console=plain
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
