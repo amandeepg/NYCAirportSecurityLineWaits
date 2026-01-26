@@ -13,6 +13,7 @@ require_cmd() {
 require_cmd curl
 require_cmd unzip
 require_cmd python3
+require_cmd yes
 SDK_ROOT="${ANDROID_SDK_ROOT:-$HOME/CodexAndroidHome}"
 case "$SDK_ROOT" in
   "~") SDK_ROOT="$HOME" ;;
@@ -70,5 +71,7 @@ mv "$tmp_dir/cmdline-tools" "$SDK_ROOT/cmdline-tools/latest"
 
 SDKMANAGER="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
 test -x "$SDKMANAGER" || die "sdkmanager not found at $SDKMANAGER"
+
+yes | "$SDKMANAGER" --sdk_root="$SDK_ROOT" --licenses >/dev/null
 
 echo "Installed Android SDK to $SDK_ROOT"
