@@ -20,11 +20,12 @@ jobs:
           distribution: temurin
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
-      - name: Assemble debug APK
-        run: ./gradlew assembleDebug --quiet --console=plain
-      - name: Upload debug APK
+      - name: Assemble slim release APK
+        run: ./gradlew assembleSlimRelease --quiet --console=plain
+      - name: Upload slim release APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: app-slim-release-apk
+          path: app/build/outputs/apk/slim/release/app-slim-release.apk
           if-no-files-found: error
+          retention-days: 1
