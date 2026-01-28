@@ -34,6 +34,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    flavorDimensions += "tier"
+    productFlavors {
+        slim {
+            dimension "tier"
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
@@ -48,6 +54,15 @@ android {
         }
     }
     namespace = 'ca.amandeep.nycairportsecuritylinewaits'
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        if (variant.productFlavors.any { it.second == "slim" }) {
+            variant.androidResources.localeFilters.addAll("en")
+            variant.androidResources.aaptAdditionalParameters.addAll(["--preferred-density", "xxxhdpi"])
+        }
+    }
 }
 
 kotlin {
